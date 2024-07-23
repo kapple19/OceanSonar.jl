@@ -3,5 +3,13 @@ uuid = "03019ade-4524-4ecd-af79-46d4f04a1b56"
 authors = ["Aaron Kaw <aaronjkaw@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
+NaNMath = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+
 [compat]
+IntervalArithmetic = "0.22.14"
+NaNMath = "1.0.2"
+Symbolics = "5.34.0"
 julia = "1.10"
