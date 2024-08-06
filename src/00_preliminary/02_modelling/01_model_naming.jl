@@ -2,13 +2,11 @@ export ModelName
 
 struct ModelName{m} end
 
-ModelName(name::Symbol) = ModelName{name}()
-
-# ModelName(m::AbstractString) = ModelName{m |> snakecase |> Symbol}()
-# ModelName(m::Symbol) = ModelName(m |> String)
+ModelName(m::AbstractString) = ModelName{m |> pascaltext |> Symbol}()
+ModelName(m::Symbol) = ModelName(m |> String)
 
 Symbol(::ModelName{M}) where {M} = M
-String(model::ModelName) = model |> ModelName |> String
+String(model::ModelName) = model |> Symbol |> String
 
-# titletext(model::ModelName) = model |> String |> titletext
-# snaketext(model::ModelName) = model |> String |> snaketext
+titletext(model::ModelName) = model |> Symbol |> titletext
+snaketext(model::ModelName) = model |> Symbol |> snaketext

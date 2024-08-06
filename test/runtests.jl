@@ -10,6 +10,12 @@ using SafeTestsets
         @safetestset "Docstrings" include("00_preliminary/01_code_quality/docstrings.jl")
     end
 
+    name = "Preliminary Tests"
+    @time @testset "$name" begin
+        @info "Testing $name"
+        @safetestset "Text Cases" include("00_preliminary/text_cases.jl")
+    end
+
     name = "Postliminary Tests"
     @time @testset "$name" begin
         @info "Testing $name"

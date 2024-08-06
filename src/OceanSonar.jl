@@ -6,7 +6,11 @@ export print_tree
 using AbstractTrees: print_tree
 import AbstractTrees: children
 
-import Base: getproperty, show
+import Base:
+    getproperty,
+    show,
+    String,
+    Symbol
 
 using InteractiveUtils: subtypes
 
