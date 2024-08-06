@@ -1,17 +1,13 @@
 module OceanSonar
 
-import Base: extrema, Pairs, show, String, Symbol
+"""
+```
+include_subroots(path::AbstractString)
+```
 
-using IntervalArithmetic: Interval, interval
-using NaNMath:
-    cos as nan_cos,
-    hypot as nan_hypot,
-    sin as nan_sin,
-    sincos as nan_sincos,
-    sqrt as nan_sqrt
-using Symbolics: Num, Symbolics, Term, wrap, @register_symbolic
-
-function include_subroots(current_path)
+Trade-off: If adding a file, need to restart REPL session.
+"""
+function include_subroots(current_path::AbstractString)
     current_directory = if isfile(current_path)
         dirname(current_path)
     elseif isdir(current_path)
