@@ -1,5 +1,9 @@
 module OceanSonar
 
+export subtypes
+
+using InteractiveUtils: subtypes
+
 """
 ```
 include_subroots(path::AbstractString)
@@ -23,7 +27,7 @@ function include_subroots(current_path::AbstractString)
         elseif isfile(subpath)
             endswith(subpath, "_.jl") && continue
             subpath == current_path && continue
-            @debug "Including: $subpath"
+            # @info "Including: $subpath"
             subpath
         else
             error("What is ", subpath, "?")
@@ -32,5 +36,7 @@ function include_subroots(current_path::AbstractString)
 end
 
 include_subroots(@__FILE__)
+
+const TRIGGER_RECOMPILATION_BY_CHANGING_THIS_NUMBER = 0
 
 end

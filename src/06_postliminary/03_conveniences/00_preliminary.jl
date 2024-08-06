@@ -1,0 +1,2 @@
+abstract type ConvenienceConfiguration end
+abstract type ConvenienceComputation end

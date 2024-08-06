@@ -9,4 +9,10 @@ using SafeTestsets
         @safetestset "Linting" include("00_preliminary/01_code_quality/linting.jl")
         @safetestset "Docstrings" include("00_preliminary/01_code_quality/docstrings.jl")
     end
+
+    name = "Postliminary Tests"
+    @time @testset "$name" begin
+        @info "Testing $name"
+        @safetestset "Abstract Trees" include("99_postliminary/abstract_trees.jl")
+    end
 end
