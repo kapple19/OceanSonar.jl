@@ -1,6 +1,6 @@
 export BoundaryProfile
 
-struct BoundaryProfile{InterfaceType <: OceanInterface, ProfileFunctionType <: Function} <: ModellingFunctor{2}
+struct BoundaryProfile{InterfaceType <: OceanInterface, ProfileFunctionType <: Function} <: SpatialModellingFunctor{2}
     profile::ProfileFunctionType
 
     function BoundaryProfile{InterfaceType}(model::ModelName; pars...) where {InterfaceType <: OceanInterface}

@@ -1,1 +1,1 @@
-struct CelerityProfileFunctionType{MediumType <: AcousticMedium} <: ModellingFunction{3} end
+struct CelerityProfileFunctionType{MediumType <: AcousticMedium} <: SpatialModellingFunction{3} end

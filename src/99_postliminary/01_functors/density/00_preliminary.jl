@@ -1,1 +1,1 @@
-struct DensityProfileFunctionType{MediumType <: AcousticMedium} <: ModellingFunction{3} end
+struct DensityProfileFunctionType{MediumType <: AcousticMedium} <: SpatialModellingFunction{3} end

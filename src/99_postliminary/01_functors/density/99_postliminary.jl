@@ -1,6 +1,6 @@
 export DensityProfile
 
-struct DensityProfile{MediumType <: AcousticMedium, ProfileFunctionType <: Function} <: ModellingFunctor{3}
+struct DensityProfile{MediumType <: AcousticMedium, ProfileFunctionType <: Function} <: SpatialModellingFunctor{3}
     profile::ProfileFunctionType
 
     function DensityProfile{MediumType}(model::ModelName; pars...) where {MediumType <: AcousticMedium}

@@ -1,6 +1,6 @@
 export CelerityProfile
 
-struct CelerityProfile{MediumType <: AcousticMedium, ProfileFunctionType <: Function} <: ModellingFunctor{3}
+struct CelerityProfile{MediumType <: AcousticMedium, ProfileFunctionType <: Function} <: SpatialModellingFunctor{3}
     profile::ProfileFunctionType
 
     function CelerityProfile{MediumType}(model::ModelName; pars...) where {MediumType <: AcousticMedium}
