@@ -4,6 +4,15 @@ export subtypes
 
 using InteractiveUtils: subtypes
 
+using ModelingToolkit:
+    ModelingToolkit,
+    Differential,
+    ODESystem,
+    terminate!,
+    @mtkbuild,
+    @parameters,
+    @variables
+
 """
 ```
 include_subroots(path::AbstractString)
@@ -37,6 +46,6 @@ end
 
 include_subroots(@__FILE__)
 
-const TRIGGER_RECOMPILATION_BY_CHANGING_THIS_NUMBER = 0
+const TRIGGER_RECOMPILATION_BY_CHANGING_THIS_NUMBER = 1
 
 end
