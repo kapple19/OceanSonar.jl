@@ -2,16 +2,29 @@ module OceanSonar
 
 export subtypes
 
+import Base: getproperty, show
+
 using InteractiveUtils: subtypes
 
 using ModelingToolkit:
     ModelingToolkit,
     Differential,
+    EnsembleProblem,
+    EnsembleSolution,
+    EnsembleThreads,
+    ODEProblem,
+    ODESolution,
     ODESystem,
+    remake,
+    # setp,
     terminate!,
     @mtkbuild,
     @parameters,
     @variables
+
+using OrdinaryDiffEq:
+    solve,
+    Tsit5
 
 """
 ```
