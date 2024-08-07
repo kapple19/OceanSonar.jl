@@ -1,7 +1,7 @@
 export Fan
 
-struct Fan{MN <: ModelName}
-    beams::Vector{Beam{MN}}
+struct Fan <: ModellingComputation
+    beams::Vector{Beam}
     sys::ODESystem
     prob::EnsembleProblem
 
@@ -15,6 +15,7 @@ struct Fan{MN <: ModelName}
     @mtkbuild sys = AcousticTracingODESystem(c_ocn, r_max)
     prob = ODEProblem(sys, [], DEFAULT_RAY_ARC_LENGTH_SPAN, [sys.θ₀ => 0.0, sys.z₀ => z₀])
 
+    ### Begin: Ensembling
     # Attempt 1: Errors on `init`.
     # tiltray! = setp(sys, sys.θ₀)
     # prob_func(internal_prob, n, _) = tiltray!(internal_prob, θ₀s[n])
@@ -28,6 +29,7 @@ struct Fan{MN <: ModelName}
 
     # Attempt 3: Make an entirely new ODEProblem
     prob_func(_, n, _) = ODEProblem(sys, [], DEFAULT_RAY_ARC_LENGTH_SPAN, [sys.θ₀ => θ₀s[n], sys.z₀ => z₀])
+    ### End: Ensembling
 
     ens_prob = EnsembleProblem(prob, prob_func = prob_func)
     ens_sol = solve(ens_prob, Tsit5(), EnsembleThreads(),
@@ -35,7 +37,7 @@ struct Fan{MN <: ModelName}
         trajectories = length(θ₀s)
     )
         beams = [Beam(model, sys, sol) for sol in ens_sol]
-        new{model |> typeof}(beams, sys, ens_prob)
+        new(beams, sys, ens_prob)
     end
 end
 

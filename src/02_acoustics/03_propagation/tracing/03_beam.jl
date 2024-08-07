@@ -18,12 +18,15 @@ function AcousticTracingODESystem(
     end
 
     deps = @variables begin
+        θ(s) = θ₀
+        c(s)
 		r(s) = r₀
 		z(s) = z₀
 		ξ(s) = cos(θ₀) / c_ocn(r₀, z₀)
 		ζ(s) = sin(θ₀) / c_ocn(r₀, z₀)
-        θ(s), [description = "Ray angle, positive downwards"]
-        c(s), [description = "Ray celerity"]
+        A(s) = 1.0
+        φ(s) = 0
+        τ(s) = 0.0
     end
 
     Ds = Differential(s)
@@ -33,12 +36,15 @@ function AcousticTracingODESystem(
     ∂c_∂z(r′, z′) = ModelingToolkit.derivative(c_ocn(r′, z), z′)
 
     eqns = [
+        θ ~ atan(ζ, ξ)
+        c ~ c_ocn(r, z)
         Ds(r) ~ c_ocn(r, z) * ξ
         Ds(z) ~ c_ocn(r, z) * ζ
 		Ds(ξ) ~ -∂c_∂r(r, z) / c_ocn(r, z)^2
 		Ds(ζ) ~ -∂c_∂z(r, z) / c_ocn(r, z)^2
-        θ ~ atan(ζ, ξ)
-        c ~ c_ocn(r, z)
+        Ds(A) ~ 0
+        Ds(φ) ~ 0
+        Ds(τ) ~ 1 / c_ocn(r, z)
     ]
     
     maximum_range = [r ~ r_max] => (
@@ -56,9 +62,7 @@ function AcousticTracingODESystem(
     )
 end
 
-struct Beam{MN <: ModelName}
-    model::MN
-
+struct Beam <: ModellingComputation
     s_max::Float64
 
     c::Function
@@ -67,6 +71,9 @@ struct Beam{MN <: ModelName}
     z::Function
     ξ::Function
     ζ::Function
+    A::Function
+    φ::Function
+    τ::Function
 
     sol::ODESolution
 
@@ -83,8 +90,14 @@ struct Beam{MN <: ModelName}
         c(s::AbstractVector{<:Real}) = sol(s, idxs = sys.c) |> collect
         θ(s::Real) = sol(s, idxs = sys.θ)
         θ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.θ) |> collect
+        A(s::Real) = sol(s, idxs = sys.A)
+        A(s::AbstractVector{<:Real}) = sol(s, idxs = sys.A) |> collect
+        φ(s::Real) = sol(s, idxs = sys.φ)
+        φ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.φ) |> collect
+        τ(s::Real) = sol(s, idxs = sys.τ)
+        τ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.τ) |> collect
 
-        new{model |> typeof}(model, sol.t[end], c, θ, r, z, ξ, ζ, sol)
+        new(sol.t[end], c, θ, r, z, ξ, ζ, A, φ, τ, sol)
     end
 end
 
