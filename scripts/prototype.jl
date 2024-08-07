@@ -2,6 +2,8 @@
 using AbstractTrees
 import AbstractTrees: children
 
+cossin = reverse ∘ sincos
+
 # Modelling Types
 abstract type ModellingType <: Function end
 
@@ -29,6 +31,13 @@ EnvironmentComponent(::Type) = NotOceanSonarEnvironmentComponent()
 EnvironmentComponent(FunctorType::Type{<:ModellingFunctor}) = EnvironmentComponent(FunctorType |> ModellingFunction)
 EnvironmentComponent(modelling_instance::ModellingType) = EnvironmentComponent(modelling_instance |> typeof)
 
+# Orienter
+orienter(::OceanInterface, r::Real; x₀::Real, y₀::Real, θ::Real) = (x₀, y₀) .+ r .* cossin(θ)
+orienter(OI::OceanInterface, x::Real, y::Real; x₀::Real, y₀::Real, θ::Real) = orienter(OI, hypot(x, y); x₀ = x₀, y₀ = y₀, θ = θ)
+orienter(::AcousticMedium, z::Real; x₀::Real, y₀::Real, θ::Real) = (x₀, y₀, z)
+orienter(AM::AcousticMedium, r::Real, z::Real; x₀::Real, y₀::Real, θ::Real) = orienter(AM, z; x₀ = x₀, y₀ = y₀, θ = θ) .+ ((r .* cossin(θ))..., 0.0)
+orienter(AM::AcousticMedium, x::Real, y::Real, z::Real; x₀::Real, y₀::Real, θ::Real) = orienter(AM, hypot(x, y), z; x₀ = x₀, y₀ = y₀, θ = θ)
+
 # Umm
 function (FunctorType::Type{<:ModellingFunctor})(model::Val; pars...)
     FunctorType(FunctorType |> EnvironmentComponent, model; pars...)
@@ -38,24 +47,14 @@ function (functor::ModellingFunctor)(args...; pars...)
     functor(functor |> EnvironmentComponent, args...; pars...)
 end
 
-function (FunctorType::Type{<:ModellingFunctor})(::OceanInterface, model::Val; pars...)
+function (FunctorType::Type{<:ModellingFunctor})(EC::EnvironmentComponent, model::Val, x₀::Real = 0.0, y₀::Real = 0.0, θ::Real = 0.0; pars...)
     modelling_function = ModellingFunction(FunctorType)
-    profile(x::Real, y::Real) = modelling_function(model, x, y; pars...)
+    profile(args::Real...) = modelling_function(model, orienter(EC, args...; x₀ = x₀, y₀ = y₀, θ = θ)...; pars...)
     FunctorType{profile |> typeof}(profile)
 end
 
-function (functor::ModellingFunctor)(::OceanInterface, x::Real, y::Real; pars...)
-    functor.profile(x, y)
-end
-
-function (FunctorType::Type{<:ModellingFunctor})(::AcousticMedium, model::Val; pars...)
-    modelling_function = ModellingFunction(FunctorType)
-    profile(x::Real, y::Real, z::Real) = modelling_function(model, x, y, z; pars...)
-    FunctorType{profile |> typeof}(profile)
-end
-
-function (functor::ModellingFunctor)(::AcousticMedium, x::Real, y::Real, z::Real; pars...)
-    functor.profile(x, y, z)
+function (functor::ModellingFunctor)(::EnvironmentComponent, args::Real...; pars...)
+    functor.profile(args...)
 end
 
 # General Modelling Function
