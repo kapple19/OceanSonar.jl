@@ -3,8 +3,9 @@ export Beam
 const DEFAULT_RAY_ARC_LENGTH_SPAN = (0, EQUATORIAL_EARTH_CIRCUMFERENCE)
 
 function AcousticTracingODESystem(
-    c_ocn::Function,
-    r_max::Real;
+    r_max::Real,
+    f::Real,
+    c_ocn::Function;
     name
 )
     @parameters begin
@@ -17,16 +18,27 @@ function AcousticTracingODESystem(
         θ₀
     end
 
+    c₀ = c_ocn(r₀, z₀)
+    ω = 2π * f
+    λ₀ = c₀ / f
+    W₀ = 30λ₀
+    p₀ = 1.0 + 0.0im
+    q₀ = 0.0 + 0.5im * ω * W₀^2
+
     deps = @variables begin
-        θ(s) = θ₀
-        c(s)
-		r(s) = r₀
-		z(s) = z₀
-		ξ(s) = cos(θ₀) / c_ocn(r₀, z₀)
-		ζ(s) = sin(θ₀) / c_ocn(r₀, z₀)
-        A(s) = 1.0
-        φ(s) = 0
-        τ(s) = 0.0
+        θ(s)::Real = θ₀
+        c(s)::Real
+		r(s)::Real = r₀
+		z(s)::Real = z₀
+		ξ(s)::Real = cos(θ₀) / c_ocn(r₀, z₀)
+		ζ(s)::Real = sin(θ₀) / c_ocn(r₀, z₀)
+        A(s)::Real = 1.0
+        φ(s)::Real = 0
+        τ(s)::Real = 0.0
+        p_re(s)::Real = real(p₀)
+        p_im(s)::Real = imag(p₀)
+        q_re(s)::Real = real(q₀)
+        q_im(s)::Real = imag(q₀)
     end
 
     Ds = Differential(s)
@@ -34,6 +46,10 @@ function AcousticTracingODESystem(
     c²(r′, z′) = c_ocn(r′, z′)^2
     ∂c_∂r(r′, z′) = ModelingToolkit.derivative(c_ocn(r, z′), r′)
     ∂c_∂z(r′, z′) = ModelingToolkit.derivative(c_ocn(r′, z), z′)
+    ∂²c_∂r²(r′, z′) = ModelingToolkit.derivative(∂c_∂r(r, z′), r′)
+    ∂²c_∂z²(r′, z′) = ModelingToolkit.derivative(∂c_∂z(r′, z), z′)
+    ∂²c_∂r∂z(r′, z′) = ModelingToolkit.derivative(∂c_∂z(r, z′), r′)
+    ∂²c_∂n²_(r′, z′, ξ′, ζ′) = 2∂²c_∂r∂z(r′, z′) * ξ′ * ζ′ - ∂²c_∂r²(r′, z′) * ζ′^2 - ∂²c_∂z²(r′, z′) * ξ′^2
 
     eqns = [
         θ ~ atan(ζ, ξ)
@@ -45,6 +61,10 @@ function AcousticTracingODESystem(
         Ds(A) ~ 0
         Ds(φ) ~ 0
         Ds(τ) ~ 1 / c_ocn(r, z)
+        Ds(p_re) ~ ∂²c_∂n²_(r, z, ξ, ζ) * q_re
+        Ds(p_im) ~ ∂²c_∂n²_(r, z, ξ, ζ) * q_im
+        Ds(q_re) ~ -c_ocn(r, z) * p_re
+        Ds(q_im) ~ -c_ocn(r, z) * p_im
     ]
     
     maximum_range = [r ~ r_max] => (
@@ -74,6 +94,8 @@ struct Beam <: ModellingComputation
     A::Function
     φ::Function
     τ::Function
+    p::Function
+    q::Function
 
     sol::ODESolution
 
@@ -97,7 +119,12 @@ struct Beam <: ModellingComputation
         τ(s::Real) = sol(s, idxs = sys.τ)
         τ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.τ) |> collect
 
-        new(sol.t[end], c, θ, r, z, ξ, ζ, A, φ, τ, sol)
+        p(s::Real) = sol(s, idxs = sys.p_re) + im * sol(s, idxs = sys.p_im)
+        p(s::AbstractVector{<:Real}) = sol(s, idxs = sys.p_re) + im * sol(s, idxs = sys.p_im) |> collect
+        q(s::Real) = sol(s, idxs = sys.q_re) + im * sol(s, idxs = sys.q_im)
+        q(s::AbstractVector{<:Real}) = sol(s, idxs = sys.q_re) + im * sol(s, idxs = sys.q_im) |> collect
+
+        new(sol.t[end], c, θ, r, z, ξ, ζ, A, φ, τ, p, q, sol)
     end
 end
 

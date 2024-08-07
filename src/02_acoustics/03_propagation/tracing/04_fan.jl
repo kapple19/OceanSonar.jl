@@ -10,9 +10,10 @@ struct Fan <: ModellingComputation
         θ₀s::AbstractVector{<:Real},
         z₀::Real,
         r_max::Real,
+        f::Real,
         c_ocn::Function
     )
-    @mtkbuild sys = AcousticTracingODESystem(c_ocn, r_max)
+    @mtkbuild sys = AcousticTracingODESystem(r_max, f, c_ocn)
     prob = ODEProblem(sys, [], DEFAULT_RAY_ARC_LENGTH_SPAN, [sys.θ₀ => 0.0, sys.z₀ => z₀])
 
     ### Begin: Ensembling
