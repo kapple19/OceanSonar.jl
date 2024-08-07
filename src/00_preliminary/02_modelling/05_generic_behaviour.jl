@@ -1,3 +1,11 @@
+function (modelling_instance::ModellingType)(model::M, args...; kw...) where {M <: Union{Symbol, <:AbstractString}}
+    modelling_instance(ModelName(model), args...; kw...)
+end
+
+function (ModellingSubtype::Type{<:ModellingType})(model::M, args...; kw...) where {M <: Union{Symbol, <:AbstractString}}
+    ModellingSubtype(ModelName(model), args...; kw...)
+end
+
 function (FunctorType::Type{<:ModellingFunctor})(model::ModelName{M}; pars...) where {M}
     FunctorType(FunctorType |> EnvironmentComponent, model; pars...)
 end
