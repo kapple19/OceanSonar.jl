@@ -82,24 +82,38 @@ function AcousticTracingODESystem(
     )
 end
 
-struct Beam <: ModellingComputation
+struct Beam{
+    CelerityFunctionType <: Function,
+    AngleFunctionType <: Function,
+    RangeFunctionType <: Function,
+    DepthFunctionType <: Function,
+    PressureFunctionType <: Function,
+    PropagationLossFunctionType <: Function
+} <: ModellingComputation
     s_max::Float64
 
-    c::Function
-    θ::Function
-    r::Function
-    z::Function
-    ξ::Function
-    ζ::Function
-    A::Function
-    φ::Function
-    τ::Function
-    p::Function
-    q::Function
+    c::CelerityFunctionType
+    θ::AngleFunctionType
+    r::RangeFunctionType
+    z::DepthFunctionType
+    p::PressureFunctionType
+    PL::PropagationLossFunctionType
+
+    # c::Function
+    # θ::Function
+    # r::Function
+    # z::Function
+    # ξ::Function
+    # ζ::Function
+    # A::Function
+    # φ::Function
+    # τ::Function
+    # p::Function
+    # q::Function
 
     sol::ODESolution
 
-    function Beam(model::ModelName, sys::ODESystem, sol::ODESolution)
+    function Beam(model::ModelName, sys::ODESystem, sol::ODESolution, f::Real)
         r(s::Real) = sol(s, idxs = sys.r)
         r(s::AbstractVector{<:Real}) = sol(s, idxs = sys.r) |> collect
         z(s::Real) = sol(s, idxs = sys.z)
@@ -124,8 +138,45 @@ struct Beam <: ModellingComputation
         q(s::Real) = sol(s, idxs = sys.q_re) + im * sol(s, idxs = sys.q_im)
         q(s::AbstractVector{<:Real}) = sol(s, idxs = sys.q_re) + im * sol(s, idxs = sys.q_im) |> collect
 
-        new(sol.t[end], c, θ, r, z, ξ, ζ, A, φ, τ, p, q, sol)
+        function pressure(s::ArcLengthType, n::NormalDisplacementType = 0.0) where {
+            ArcLengthType <: Union{<:Real, <:AbstractVector{<:Real}},
+            NormalDisplacementType <: Union{<:Real, <:AbstractMatrix{<:Real}}
+        }
+            c′ = c(s)
+            r′ = r(s)
+            A′ = A(s)
+            φ′ = φ(s)
+            p′ = p(s)
+            q′ = q(s)
+            τ′ = τ(s)
+        
+            return @. complex(A′, φ′) * sqrt(
+                c′ / (r′ * q′) * q(0) * f * cos(θ(0))
+            ) * cispi(
+                -2f * (
+                    τ′ + p′ * n^2 / 2q′
+                ) / 4
+            ) / $c(0)
+        end
+
+        function loss(s::ArcLengthType, n::NormalDisplacementType = 0.0) where {
+            ArcLengthType <: Union{<:Real, <:AbstractVector{<:Real}},
+            NormalDisplacementType <: Union{<:Real, <:AbstractMatrix{<:Real}}
+        }
+            -20(pressure(s, n) .|> abs .|> log10)
+        end
+
+        fcns = (c, θ, r, z, pressure, loss)
+
+        new{typeof.(fcns)...}(sol.t[end], fcns..., sol)
     end
 end
 
-show(io::IO, beam::Beam) = print(io, "Beam($(beam.θ(0) |> rad2deg)°)")
+show(io::IO, ::MIME"text/plain", beam::Beam) = print(io, "Beam($(beam.θ(0) |> rad2deg)°)")
+
+function (beam::Beam)(s::ArcLengthType, n::NormalDisplacementType) where {
+    ArcLengthType <: Union{<:Real, <:AbstractVector{<:Real}},
+    NormalDisplacementType <: Union{<:Real, <:AbstractMatrix{<:Real}}
+}
+    beam.p(s, n)
+end

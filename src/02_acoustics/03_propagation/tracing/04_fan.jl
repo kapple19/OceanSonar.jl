@@ -37,12 +37,12 @@ struct Fan <: ModellingComputation
         reltol = 1e-50,
         trajectories = length(θ₀s)
     )
-        beams = [Beam(model, sys, sol) for sol in ens_sol]
+        beams = [Beam(model, sys, sol, f) for sol in ens_sol]
         new(beams, sys, ens_prob)
     end
 end
 
-function show(io::IO, fan::Fan)
+function show(io::IO, ::MIME"text/plain", fan::Fan)
     xtr = [beam.θ(0) for beam in fan.beams] |> extrema .|> rad2deg
-    print(io, "Fan($(fan.beams |> length): $(xtr |> minimum)° .. $(xtr |> maximum)°)")
+    print(io, "Fan($(fan.beams |> length) beams: $(xtr |> minimum)° .. $(xtr |> maximum)°)")
 end
