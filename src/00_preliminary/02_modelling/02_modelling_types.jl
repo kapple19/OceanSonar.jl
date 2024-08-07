@@ -1,7 +1,8 @@
-abstract type AbstractModeller <: Function end
+abstract type ModellingType <: Function end
 
-abstract type ModellingFunction <: AbstractModeller end
-abstract type ModellingFunctor <: AbstractModeller end
+abstract type ModellingFunction <: ModellingType end
+abstract type ModellingFunctor <: ModellingType end
+abstract type ModellingContainer <: ModellingType end
+abstract type ModellingComputation <: ModellingType end
 
-abstract type SpatialModellingFunction{D} <: AbstractModeller end
-abstract type SpatialModellingFunctor{D} <: AbstractModeller end
+children(T::Type{<:ModellingType}) = subtypes(T)

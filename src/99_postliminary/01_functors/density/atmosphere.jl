@@ -1,7 +1,7 @@
 export atmosphere_density_profile
+export AtmosphereDensityProfile
 
-## Instantiation
-const atmosphere_density_profile = DensityProfileFunctionType{Atmosphere}()
+@implement_environment_function_and_functor Atmosphere Density
 
 ## Models
 atmosphere_density_profile(::ModelName{:Homogeneous}, x::Real, y::Real, z::Real; ρ::Real = 1.225)::Real = ρ

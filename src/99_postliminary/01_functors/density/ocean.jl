@@ -1,5 +1,6 @@
 export ocean_density_profile
+export OceanDensityProfile
 
-const ocean_density_profile = DensityProfileFunctionType{Ocean}()
+@implement_environment_function_and_functor Ocean Density
 
 ocean_density_profile(::ModelName{:Homogeneous}, x::Real, y::Real, z::Real; ρ::Real = 1029.0)::Real = ρ

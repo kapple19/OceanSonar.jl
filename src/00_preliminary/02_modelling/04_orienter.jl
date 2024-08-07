@@ -1,0 +1,5 @@
+orienter(::OceanInterface, r::Real; x₀::Real, y₀::Real, θ::Real) = (x₀, y₀) .+ r .* cossin(θ)
+orienter(OI::OceanInterface, x::Real, y::Real; x₀::Real, y₀::Real, θ::Real) = orienter(OI, hypot(x, y); x₀ = x₀, y₀ = y₀, θ = θ)
+orienter(::AcousticMedium, z::Real; x₀::Real, y₀::Real, θ::Real) = (x₀, y₀, z)
+orienter(AM::AcousticMedium, r::Real, z::Real; x₀::Real, y₀::Real, θ::Real) = orienter(AM, z; x₀ = x₀, y₀ = y₀, θ = θ) .+ ((r .* cossin(θ))..., 0.0)
+orienter(AM::AcousticMedium, x::Real, y::Real, z::Real; x₀::Real, y₀::Real, θ::Real) = orienter(AM, hypot(x, y), z; x₀ = x₀, y₀ = y₀, θ = θ)

@@ -1,6 +1,7 @@
 export ocean_celerity_profile
+export OceanCelerityProfile
 
-const ocean_celerity_profile = CelerityProfileFunctionType{Ocean}()
+@implement_environment_function_and_functor Ocean Celerity
 
 ocean_celerity_profile(::ModelName{:Homogeneous}, x::Real, y::Real, z::Real; c::Real = 1500.0)::Real = c
 

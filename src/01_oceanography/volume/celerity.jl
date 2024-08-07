@@ -1,8 +1,6 @@
 export ocean_celerity
 
-struct OceanCelerityFunctionType <: ModellingFunction end
-
-const ocean_celerity = OceanCelerityFunctionType()
+@implement_generic_modelling_function ocean_celerity
 
 """
 ```

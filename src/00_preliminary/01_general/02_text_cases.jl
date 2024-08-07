@@ -54,7 +54,7 @@ function textcase(
     v::V,
     text::AbstractString;
     keeptokens::AbstractVector{<:AbstractString} = keeptokens
-) where {
+)::AbstractString where {
     V <: Union{
         Val{:snake}, Val{:space}, Val{:kebab},
         Val{:Snake}, Val{:Space}, Val{:Kebab},
@@ -111,17 +111,17 @@ function textcase(::Val{:camel}, text::AbstractString; keeptokens = keeptokens)
 end
 
 function textcase(::Val{:pascal}, args...; kw...)
-    return textcase(Val(:Pascal), args...; kw...)
+    return textcase(Val(:Pascal), String.(args)...; kw...)
 end
 
 function textcase(::Val{:title}, args...; kw...)
-    return textcase(Val(:Space), args...; kw...)
+    return textcase(Val(:Space), String.(args)...; kw...)
 end
 
-titletext(text::AbstractString) = textcase(Val(:title), text)
-snaketext(text::AbstractString) = textcase(Val(:snake), text)
-pascaltext(text::AbstractString) = textcase(Val(:pascal), text)
+titletext(text) = textcase(Val(:title), text)
+snaketext(text) = textcase(Val(:snake), text)
+pascaltext(text) = textcase(Val(:pascal), text)
 
-prettytext(text::AbstractString) = titletext(text)
+prettytext(text::AbstractString)::AbstractString = titletext(text)
 prettytext(text::Symbol) = text |> String |> prettytext
 prettytext(::Val{T}) where {T} = T |> prettytext
