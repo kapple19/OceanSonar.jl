@@ -5,6 +5,7 @@ abstract type AcousticMedium <: EnvironmentComponent end
 
 struct NotOceanSonarEnvironmentComponent <: EnvironmentComponent end
 
+struct GenericOceanInterface <: OceanInterface end
 struct Surface <: OceanInterface end
 struct Bottom <: OceanInterface end
 

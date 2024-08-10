@@ -1,7 +1,7 @@
 export bottom_boundary_profile
 export BathymetryProfile
 
-@implement_environment_function_and_functor Bottom Boundary
+@implement_environment_function_and_functor Boundary Bottom
 const bathymetry_profile = bottom_boundary_profile
 BathymetryProfile = BottomBoundaryProfile
 

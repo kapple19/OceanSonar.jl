@@ -1,7 +1,7 @@
 export altimetry_profile
 export AltimetryProfile
 
-@implement_environment_function_and_functor Surface Boundary
+@implement_environment_function_and_functor Boundary Surface
 const altimetry_profile = surface_boundary_profile
 AltimetryProfile = SurfaceBoundaryProfile
 

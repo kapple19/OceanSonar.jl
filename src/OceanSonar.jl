@@ -31,6 +31,7 @@ using ModelingToolkit:
     @variables
 
 using OrdinaryDiffEq:
+    ODEIntegrator,
     solve,
     Tsit5
 

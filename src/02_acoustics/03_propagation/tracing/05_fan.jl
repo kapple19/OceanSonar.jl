@@ -11,10 +11,14 @@ struct Fan <: ModellingComputation
         z₀::Real,
         r_max::Real,
         f::Real,
-        c_ocn::Function
+        c_ocn::Function,
+        z_bty::Function,
+        R_btm::Function,
+        z_ati::Function,
+        R_srf::Function
     )
-    @mtkbuild sys = AcousticTracingODESystem(r_max, f, c_ocn)
-    prob = ODEProblem(sys, [], DEFAULT_RAY_ARC_LENGTH_SPAN, [sys.θ₀ => 0.0, sys.z₀ => z₀])
+    @mtkbuild sys = AcousticTracingODESystem(model, r_max, f, c_ocn, z_bty, R_btm, z_ati, R_srf)
+    prob = ODEProblem(sys, [], RAY_ARC_LENGTH_SPAN, [sys.θ₀ => 0.0, sys.z₀ => z₀])
 
     ### Begin: Ensembling
     # Attempt 1: Errors on `init`.
@@ -29,7 +33,7 @@ struct Fan <: ModellingComputation
     # end
 
     # Attempt 3: Make an entirely new ODEProblem
-    prob_func(_, n, _) = ODEProblem(sys, [], DEFAULT_RAY_ARC_LENGTH_SPAN, [sys.θ₀ => θ₀s[n], sys.z₀ => z₀])
+    prob_func(_, n, _) = ODEProblem(sys, [], RAY_ARC_LENGTH_SPAN, [sys.θ₀ => θ₀s[n], sys.z₀ => z₀])
     ### End: Ensembling
 
     ens_prob = EnsembleProblem(prob, prob_func = prob_func)
