@@ -1,13 +1,17 @@
 module OceanSonarMakieExt
     import Makie: plot!
     
-    using Makie: band!, Theme, @recipe
+    using Makie: band!, heatmap!, Theme, @recipe
 
     import OceanSonar:
         bathymetryband,
-        bathymetryband!
+        bathymetryband!,
+        altimetryband,
+        altimetryband!,
+        celerityheatmap,
+        celerityheatmap!
     
-    using OceanSonar: OceanSonar, interval, sup
+    using OceanSonar.IntervalArithmetic: inf, interval, sup
         
     """
     ```

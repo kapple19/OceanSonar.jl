@@ -1,7 +1,6 @@
 module OceanSonar
 
 ## Re-exports
-export interval
 export print_tree
 export subtypes
 
@@ -16,7 +15,7 @@ import Base:
 
 using InteractiveUtils: subtypes
 
-using IntervalArithmetic: interval, sup
+using IntervalArithmetic: IntervalArithmetic
 
 using ModelingToolkit:
     ModelingToolkit,

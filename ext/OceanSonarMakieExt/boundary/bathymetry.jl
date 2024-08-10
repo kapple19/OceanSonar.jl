@@ -1,16 +1,15 @@
-@recipe(BathymetryBand, bty, rmin, rmax) do scene
+@recipe(BathymetryBand, bty, r_min, r_max) do scene
     Theme()
 end
 
 function plot!(plot::BathymetryBand{<:Tuple{<:Function, <:Real, <:Real}})
-    bty, r_min, r_max = plot[1:3]
-    
-    r_ntv = interval(r_min[], r_max[])
-    z_max = r_ntv |> bty[] |> sup
-    r = range(r_min[], r_max[], 301)
+    r_ntv = interval(plot.r_min[], plot.r_max[])
+    z_max = r_ntv |> plot.bty[] |> sup
+    r = range(plot.r_min[], plot.r_max[], 301)
+
     band!(plot,
         r,
-        r .|> bty[],
+        r .|> plot.bty[],
         fill(z_max, length(r)),
         color = :sienna
     )
