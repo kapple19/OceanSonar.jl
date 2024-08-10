@@ -1,7 +1,14 @@
 module OceanSonarMakieExt
-    import Makie: plot!
+    import Makie: convert_arguments, plot!
     
-    using Makie: band!, heatmap!, Theme, @recipe
+    using Makie:
+        band!,
+        heatmap!,
+        Point2,
+        Series,
+        series!,
+        Theme,
+        @recipe
 
     import OceanSonar:
         bathymetryband,
@@ -9,10 +16,14 @@ module OceanSonarMakieExt
         altimetryband,
         altimetryband!,
         celerityheatmap,
-        celerityheatmap!
-    
+        celerityheatmap!,
+        raycurves,
+        raycurves!
+
+    using OceanSonar: Beam, Fan
+
     using OceanSonar.IntervalArithmetic: inf, interval, sup
-        
+
     """
     ```
     include_subroots(path::AbstractString)
