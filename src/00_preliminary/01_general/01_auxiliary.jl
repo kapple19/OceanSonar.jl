@@ -6,6 +6,11 @@ const uniquesort! = unique! ∘ sort!
 
 const cossin = reverse ∘ sincos
 
+magcossin(r::Number, θ::Number) = r .* cossin(θ)
+
+magang(x::Real, y::Real) = ((y, x),) .|> ((hypot, atan) .|> splat)
+magang(z::Number) = z |> reim |> splat(magang)
+
 function isalphanumeric(char::AbstractChar)
     '0' ≤ char ≤ '9' && return true
     'a' ≤ char ≤ 'z' && return true
