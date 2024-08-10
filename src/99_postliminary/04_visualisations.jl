@@ -9,6 +9,7 @@ export celerityheatmap!
 
 export raycurves
 export raycurves!
+export interactive_raycurves
 
 function altimetryband end
 function altimetryband! end
@@ -21,3 +22,4 @@ function celerityheatmap! end
 
 function raycurves end
 function raycurves! end
+function interactive_raycurves end

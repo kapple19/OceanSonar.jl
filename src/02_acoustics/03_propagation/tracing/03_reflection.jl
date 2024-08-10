@@ -1,5 +1,9 @@
-beam_reflection_curvature_sign(::ModelName{:surface}) = -1
-beam_reflection_curvature_sign(::ModelName{:bottom}) = 1
+reflection_angle_degrees(
+    θ_bnd_deg::Real, θ_inc_deg::Real
+) = mod(2θ_bnd_deg - θ_inc_deg + 180, 360) - 180
+
+beam_reflection_curvature_sign(::ModelName{:Surface}) = -1
+beam_reflection_curvature_sign(::ModelName{:Bottom}) = 1
 
 function reflect!(ntg::ODEIntegrator, vars::NamedTuple, pars::NamedTuple, ctx::Tuple{Symbol, <:Function, <:Function, <:Function})
     r = ntg.u[vars.r]
@@ -13,10 +17,10 @@ function reflect!(ntg::ODEIntegrator, vars::NamedTuple, pars::NamedTuple, ctx::T
 
     ntf = ctx[1]
     c_ocn = ctx[2]
-    z_bty = ctx[3]
-    R_btm = ctx[4]
+    z_bnd = ctx[3]
+    R_ntf = ctx[4]
 
-    dz_dr_bty_func(r′) = ForwardDiff.derivative(z_bty, r′)
+    dz_dr_bty_func(r′) = ForwardDiff.derivative(z_bnd, r′)
     dz_dr_bty = dz_dr_bty_func(r)
 
     θ_bnd_deg = dz_dr_bty |> atand
@@ -50,7 +54,7 @@ function reflect!(ntg::ODEIntegrator, vars::NamedTuple, pars::NamedTuple, ctx::T
         )
     ) / c^2
 
-    R = (θ_inc_deg - θ_bnd_deg) |> abs |> R_btm
+    R = R_ntf(r, (θ_inc_deg - θ_bnd_deg) |> abs)
 
     ntg.u[[vars.ξ, vars.ζ]] .= cossind(θ_rfl_deg) ./ c
     ntg.u[[vars.A, vars.φ]] .= [A * abs(R), φ + angle(R)]

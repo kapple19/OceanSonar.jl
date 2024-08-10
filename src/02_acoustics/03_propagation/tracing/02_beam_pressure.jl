@@ -1,9 +1,9 @@
 ## Models
-# function beam_pressure(::Val{:Ray}, )
+# function beam_pressure(::ModelName{:Ray}, )
 
 # end
 
-function beam_pressure(::Val{:Gaussian},
+function beam_pressure(::ModelName{:Gaussian},
     n::Real,
     f::Real,
     c₀::Real,

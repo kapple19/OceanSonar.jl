@@ -5,6 +5,7 @@ export ⊕
 const uniquesort! = unique! ∘ sort!
 
 const cossin = reverse ∘ sincos
+const cossind = reverse ∘ sincosd
 
 magcossin(r::Number, θ::Number) = r .* cossin(θ)
 

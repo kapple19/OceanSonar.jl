@@ -13,4 +13,6 @@ function plot!(plot::AltimetryBand{<:Tuple{<:Function, <:Real, <:Real}})
         fill(z_min, length(r)),
         color = :slateblue1
     )
+
+    return plot
 end

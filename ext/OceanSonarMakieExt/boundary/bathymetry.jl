@@ -13,4 +13,6 @@ function plot!(plot::BathymetryBand{<:Tuple{<:Function, <:Real, <:Real}})
         fill(z_max, length(r)),
         color = :sienna
     )
+
+    return plot
 end

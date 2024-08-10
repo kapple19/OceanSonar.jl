@@ -12,4 +12,6 @@ function plot!(plot::CelerityHeatmap{<:Tuple{<:Function, <:Real, <:Real, <:Real,
         [plot.ati[](r′, z′) for r′ in r, z′ in z],
         colormap = :Blues
     )
+
+    return plot
 end

@@ -1,31 +1,25 @@
-module OceanSonarMakieExt
-    import Makie: convert_arguments, plot!
-    
-    using Makie:
-        band!,
-        heatmap!,
-        Observable,
-        onany,
-        Point,
-        Point2,
-        Series,
-        series!,
-        Theme,
-        @recipe
+module OceanSonarGLMakieExt
+    using GLMakie:
+        Axis,
+        Figure,
+        lift,
+        limits!,
+        Slider
 
-    import OceanSonar:
-        bathymetryband,
-        bathymetryband!,
-        altimetryband,
+    using OceanSonar:
         altimetryband!,
-        celerityheatmap,
+        bathymetryband!,
         celerityheatmap!,
-        raycurves,
-        raycurves!
+        Fan,
+        interactive_raycurves,
+        raycurves!,
+        ReflectionCoefficientProfile
 
-    using OceanSonar: Beam, Fan
+    import OceanSonar: interactive_raycurves
 
     using OceanSonar.IntervalArithmetic: inf, interval, sup
+
+    using OceanSonar.Statistics: mean
 
     """
     ```

@@ -13,9 +13,15 @@ import Base:
     String,
     Symbol
 
+using Statistics: Statistics
+
+using ForwardDiff: ForwardDiff
+
 using InteractiveUtils: subtypes
 
 using IntervalArithmetic: IntervalArithmetic
+
+using LinearAlgebra: dot
 
 using ModelingToolkit:
     ModelingToolkit,
@@ -37,6 +43,8 @@ using OrdinaryDiffEq:
     ODEIntegrator,
     solve,
     Tsit5
+
+using PrecompileTools: @setup_workload, @compile_workload
 
 """
 ```
