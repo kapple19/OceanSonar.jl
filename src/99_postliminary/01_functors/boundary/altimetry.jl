@@ -5,4 +5,4 @@ export AltimetryProfile
 const altimetry_profile = surface_boundary_profile
 AltimetryProfile = SurfaceBoundaryProfile
 
-surface_boundary_profile(::ModelName{:Flat}, x::Real, y::Real; z::Real = 0.0)::Float64 = z
+surface_boundary_profile(::ModelName{:Flat}, x::Real, y::Real; z::Real = 0.0) = z

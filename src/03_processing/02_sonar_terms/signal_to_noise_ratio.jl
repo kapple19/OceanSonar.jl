@@ -1,6 +1,6 @@
 """
 ```
-signal_to_noise_ratio(::Type{<:Passive}, SL::Real, PL::Real, NL::Real, DI::Real)::Float64
+signal_to_noise_ratio(::Type{<:Passive}, SL::Real, PL::Real, NL::Real, DI::Real)
 ```
 
 Computes the Signal-to-Noise Ratio (SNR) [dB] as a function of (Abraham, 2019, Section 2.3.4):
@@ -12,10 +12,10 @@ Computes the Signal-to-Noise Ratio (SNR) [dB] as a function of (Abraham, 2019, S
 
 Implementation of Equation 2.48 of Abraham (2019).
 """
-function signal_to_noise_ratio(::Type{<:Passive}, SL::Real, PL::Real, NL::Real, AG::Real)::Float64
+function signal_to_noise_ratio(::Type{<:Passive}, SL::Real, PL::Real, NL::Real, AG::Real)
     SL - PL - NL + AG
 end
 
-function signal_to_noise_ratio(::Type{<:Monostatic}, SL::Real, PL::Real, TS::Real, RL::Real, NL::Real)::Float64
+function signal_to_noise_ratio(::Type{<:Monostatic}, SL::Real, PL::Real, TS::Real, RL::Real, NL::Real)
     SL - 2PL + TS - (NL ⊕ RL)
 end
