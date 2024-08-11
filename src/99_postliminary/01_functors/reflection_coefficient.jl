@@ -1,15 +1,7 @@
 export reflection_coefficient_profile
 export ReflectionCoefficientProfile
 
-struct ReflectionCoefficientProfileType <: ModellingFunction end
-const reflection_coefficient_profile = ReflectionCoefficientProfileType()
-
-struct ReflectionCoefficientProfile{ProfileFunctionType <: Function} <: ModellingFunctor
-    profile::ProfileFunctionType
-end
-
-EnvironmentComponent(::ReflectionCoefficientProfileType) = GenericOceanInterface()
-ModellingFunction(::Type{<:ReflectionCoefficientProfile}) = reflection_coefficient_profile
+@implement_environment_function_and_functor ReflectionCoefficient GenericOceanInterface
 
 function (FunctorType::Type{<:ReflectionCoefficientProfile})(
     EC::GenericOceanInterface,
