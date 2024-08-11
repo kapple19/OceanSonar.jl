@@ -1,0 +1,3 @@
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
