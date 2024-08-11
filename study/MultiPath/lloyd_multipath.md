@@ -91,48 +91,102 @@ z_bty = 500
 z_src = 25
 z_rcv = 200
 
-r_mid = r_max/2
 k = 2π * f / c
 
 # Images
 num_pairs = 5
 pair_indices = ceil(Int, 0.25 - num_pairs/2) : floor(Int, 0.25 + num_pairs/2)
+bty_img_indices = 2minimum(Int, pair_indices) : 2maximum(Int, pair_indices)
 
-z_bty_imgs = z_bty * pair_indices
-z_src_imgs = z_bty_imgs .+ (z_src * [-1 1])
-s_rays = [hypot(z, r) for z in z_src_imgs, r in r_rcvs] # surprised and happy this worked so naturally
+z_bty_imgs = z_bty * bty_img_indices
+z_src_imgs = 2*z_bty*pair_indices .+ (z_src * [-1 1])
+s_rays_imgs = [hypot(z, r) for z in z_src_imgs, r in r_rcvs] # surprised and happy this worked so naturally
 R_cml_rays = [isodd(index) ? -1 : 1 for index in pair_indices]
-p_rays = @. R_cml_rays * cis(k * s_rays)
+p_rays = @. R_cml_rays * cis(k * s_rays_imgs)
 
 PL_rays = @. -20log10(p_rays |> abs)
+```
 
+Plotting ray trajectory images:
+
+```julia
 fig = Figure()
 axis = Axis(fig[1, 1], yreversed = true)
 
 for z_bty_img in z_bty_imgs
   lines!(axis, [0, r_max], fill(z_bty_img, 2), color = :black)
 end
-scatter!.(axis, 0, z_src_imgs, color = :blue)
+scatter!.(axis, 0, z_src_imgs)
 lines!(axis, r_rcvs, fill(z_rcv, size(r_rcvs)), linestyle = :dash, color = :red)
 for z_src_img in z_src_imgs
-  lines!(axis, [0, r_mid], [z_src_img, z_rcv], color = :blue)
+  lines!(axis, [0, r_max], [z_src_img, z_rcv])
 end
-
-# lines!(axis, r_rcvs, s_rays[1, 1, :])
-
-# for n in eachindex(pair_indices)
-#   lines!(axis, r_rcvs, PL_rays[n, 1, :])
-#   lines!(axis, r_rcvs, PL_rays[n, 2, :])
-# end
-
-# limits!(axis, 0, r_max, 40, 90)
 
 display(fig)
 ```
 
+Plotting actual ray trajectories:
+
+```julia
+fig = Figure()
+axis = Axis(fig[1, 1], yreversed = true)
+
+# for z_bty_img in z_bty_imgs
+#   lines!(axis,
+#     [0, r_max],
+#     fill(z_bty_img, 2),
+#     color = :black,
+#     # linestyle = z_bty_img % 
+#   )
+# end
+
+lines!(axis, [0, r_max], zeros(2), color = :black)
+lines!(axis, [0, r_max], fill(z_bty, 2), color = :black)
+
+for z_src_img in z_src_imgs
+  rz_ray_rfls = [
+    (
+      (z_bty_img - z_src_img) / (z_rcv - z_src_img) * r_max,
+      z_bty_img
+    )
+    for (nz, z_bty_img) in enumerate(z_bty_imgs)
+  ]
+
+  filter!(rz_ray_rfl -> 0 < rz_ray_rfl[1] < r_max, rz_ray_rfls)
+  sort!(rz_ray_rfls, by = rz_ray_rfl -> rz_ray_rfl[1])
+
+  r_ray_img_rfls = [rz_ray_rfl[1] for rz_ray_rfl in rz_ray_rfls]
+  z_ray_img_rfls = [rz_ray_rfl[2] for rz_ray_rfl in rz_ray_rfls]
+  # lines!(axis, r_ray_img_rfls, z_ray_img_rfls)
+  # scatter!(axis, r_ray_img_rfls, z_ray_img_rfls)
+
+  r_rays = [0; r_ray_img_rfls; r_max]
+  z_ray_imgs = [z_src_img; z_ray_img_rfls; z_rcv]
+  # lines!(axis, r_rays, z_ray_imgs)
+  # scatter!(axis, r_rays, z_ray_imgs)
+
+  z_rays = @. abs(z_ray_imgs)
+  while any(z_bty .< z_rays)
+    z_rays = @. abs(z_bty - z_rays)
+    z_rays = @. abs(z_bty - z_rays)
+  end
+
+  lines!(axis, r_rays, z_rays)
+  # scatter!(axis, r_rays, z_rays)
+end
+
+# limits!(axis, -0.05r_max, 1.05r_max, 1.05 .* reverse(z_src_imgs |> extrema)...)
+
+display(fig)
+```
+
+### Notes
+
 Development ease:
 
-* This treatise was developed in a Markdown file, and I could execute the above code directly in VS Code without needing to copy-paste between here and a `*.jl` file. In contrast, MATLAB must run code in a `*.m` file (or `*.mlx`, compared with `Jupyter` in another section below).
+* This treatise was developed in a Markdown file, and I could execute the above code directly in VS Code without needing to copy-paste between here and a `*.jl` file. Julia error messages even refer to this Markdown file by line of error location. In contrast, MATLAB must run code in a `*.m` file (or `*.mlx`, compared with `Jupyter` in another section below).
+
+## Julia's Package Ecosystem vs MATLAB's Toolboxes
 
 ## Julia's `Unitful.jl` vs MATLAB's TODO
 
