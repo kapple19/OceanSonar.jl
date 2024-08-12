@@ -1,8 +1,6 @@
 export altimetry_profile
 export AltimetryProfile
 
-@implement_environment_function_and_functor Boundary Surface
-const altimetry_profile = surface_boundary_profile
-AltimetryProfile = SurfaceBoundaryProfile
+@implement_spatially_modelled_function_and_functor AltimetryProfile 2
 
-surface_boundary_profile(::ModelName{:Flat}, x::Real, y::Real; z::Real = 0.0) = z
+altimetry_profile(::ModelName{:Flat}, x::Real, y::Real; z::Real = 0.0) = z
