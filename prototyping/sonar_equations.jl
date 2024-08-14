@@ -1,3 +1,4 @@
+## Generic Form
 abstract type EmissionType end
 
 struct NoiseOnly <: EmissionType end
@@ -78,3 +79,26 @@ struct SonarEquation
         new(SL, TL, TS, NL, RL, AG, SNR, DT, SE, POD)
     end
 end
+
+## Equation Form
+abstract type Sonar end
+
+abstract type Passive <: Sonar end
+abstract type Active <: Sonar end
+
+abstract type Narrowband <: Passive end
+abstract type Broadband <: Passive end
+abstract type Intercept <: Passive end
+
+abstract type CombinedInterference <: Active end
+abstract type ReverberationLimited <: Active end
+abstract type AmbientNoiseLimited <: Active end
+
+sonar_equation(::Sonar) = (SL, PLa, PLb, TS, NL, RL, AG, DT) -> SL - PLa + Ts - PLb + ((NL - AG) ⊕ RL) - DT
+sonar_equation(::Passive) = (SL, PL, NL, AG, DT) -> SL - PL - NL + AG - DT
+sonar_equation(::Narrowband) = () -> NaN
+sonar_equation(::Broadband) = () -> NaN
+sonar_equation(::Intercept) = () -> NaN
+sonar_equation(::CombinedInterference) = () -> NaN
+sonar_equation(::ReverberationLimited) = () -> NaN
+sonar_equation(::AmbientNoiseLimited) = () -> NaN
