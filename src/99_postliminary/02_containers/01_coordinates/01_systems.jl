@@ -11,6 +11,8 @@ struct UpwardDepth <: PositiveDepthDirection end
 
 abstract type AbstractCoordinateSystem{DepthDir <: PositiveDepthDirection} end
 
+RectangularCoordinateNaN(DepthDir::Type{<:PositiveDepthDirection}) = RectangularCoordinate{DepthDir}(x = NaN32, y = NaN32, z = NaN32)
+
 @kwdef mutable struct RectangularCoordinate{DepthDir} <: AbstractCoordinateSystem{DepthDir}
     x::Float32
     y::Float32
@@ -28,3 +30,7 @@ end
     θ::Float32
     φ::Float32
 end
+
+# function show(io::IO, ::MIME"text/plain", pos::AbstractCoordinateSystem{DepthDir}) where {DepthDir <: PositiveDepthDirection}
+    
+# end

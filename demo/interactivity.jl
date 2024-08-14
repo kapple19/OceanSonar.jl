@@ -2,9 +2,9 @@
 using OceanSonar, GLMakie
 
 interactive_raycurves(
-    OceanCelerityProfile("Munk"),
-    BathymetryProfile("Flat", z = 5e3),
-    AltimetryProfile("Flat");
+    OceanCelerityProfile(:Munk),
+    BathymetryProfile(:Flat, z = 5e3),
+    AltimetryProfile(:Flat);
     r_max = 100e3,
     num_rays = 5,
     min_angle = -π/20,
@@ -15,9 +15,9 @@ interactive_raycurves(
 using OceanSonar, GLMakie
 
 interactive_raycurves(
-    OceanCelerityProfile("Homogeneous"),
+    OceanCelerityProfile(:Homogeneous),
     BathymetryProfile("Parabolic"),
-    AltimetryProfile("Flat");
+    AltimetryProfile(:Flat);
     r_max = 20e3,
     z_src = 0.0,
     num_rays = 5,
@@ -28,11 +28,11 @@ interactive_raycurves(
 ##
 using OceanSonar, GLMakie
 
-cel = OceanCelerityProfile("Homogeneous")
-ati = AltimetryProfile("Flat")
+cel = OceanCelerityProfile(:Homogeneous)
+ati = AltimetryProfile(:Flat)
 bty = BathymetryProfile("Parabolic")
-Rsrf = ReflectionCoefficientProfile("Reflective")
-Rbot = ReflectionCoefficientProfile("Mirror")
+Rsrf = ReflectionCoefficientProfile(:Reflective)
+Rbot = ReflectionCoefficientProfile(:Mirror)
 
 r_max = 20e3
 z_src = 0.0

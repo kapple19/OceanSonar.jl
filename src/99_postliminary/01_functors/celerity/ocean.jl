@@ -13,3 +13,7 @@ function ocean_celerity_profile(::ModelName{:Munk}, x::Real, y::Real, z::Real; �
         )
     )
 end
+
+function ocean_celerity_profile(::ModelName{:RefractionSquared}, x::Real, y::Real, z::Real; c₀ = 1550)
+    c₀ / sqrt(1 + 2.4z / c₀)
+end

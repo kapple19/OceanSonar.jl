@@ -23,10 +23,17 @@ function (FunctorType::Type{<:ModellingFunctor})(
     pars...
 ) where {M}
     modelling_function = ModellingFunction(FunctorType)
-    profile(args::Real...) = modelling_function(model, orienter(SDS, args...; x₀ = x₀, y₀ = y₀, θ = θ)...; pars...)
+    profile(args::Real...) = modelling_function(model, orient(SDS, args...; x₀ = x₀, y₀ = y₀, θ = θ)...; pars...)
     FunctorType{profile |> typeof}(profile)
 end
 
 function (functor::ModellingFunctor)(::SpatialDimensionSize, args::Real...; pars...)
     functor.profile(args...)
 end
+
+# function (container::ModellingContainer)(; kw...)
+#     (
+#         haskey(kw, field) ? kw[field] : @initialise_function()
+#         for field in fieldnames(container)
+#     ) |> splat(container)
+# end

@@ -22,3 +22,16 @@ macro implement_spatially_modelled_function_and_functor(functor_name, spatial_di
         ModellingFunction(::Type{<:$functor_name}) = $function_name
     end
 end
+
+# macro add_container_defaults_method(container_name)
+#     container = getproperty(OceanSonar, container_name)
+#     fields = fieldnames(container)
+#     @eval begin
+#         function $container_name(; kw...)
+#             (
+#                 haskey(kw, field) ? kw[field] : @initialise_function()
+#                 for field in fields
+#             ) |> splat($container_name)
+#         end
+#     end
+# end

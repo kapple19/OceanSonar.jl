@@ -2,6 +2,12 @@ export uniquesort!
 export cossin
 export ⊕
 
+macro initialise_function()
+    return quote
+        function anon end
+    end
+end
+
 const uniquesort! = unique! ∘ sort!
 
 const cossin = reverse ∘ sincos

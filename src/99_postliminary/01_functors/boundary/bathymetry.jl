@@ -8,6 +8,7 @@ bathymetry_profile(::ModelName{:Flat}, x::Real, y::Real; z::Real) = z
 bathymetry_profile(::ModelName{:Epipelagic}, x::Real, y::Real) = 100.0
 bathymetry_profile(::ModelName{:Mesopelagic}, x::Real, y::Real) = 1e3
 bathymetry_profile(::ModelName{:Bathypelagic}, x::Real, y::Real) = 4e3
+bathymetry_profile(::ModelName{:Deep}, x::Real, y::Real) = 5e3
 bathymetry_profile(::ModelName{:Abyssopelagic}, x::Real, y::Real) = 6e3
 
 bathymetry_profile(::ModelName{:Bottomless}, x::Real, y::Real) = Inf

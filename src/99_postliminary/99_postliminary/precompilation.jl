@@ -1,9 +1,9 @@
 @setup_workload begin
-    cel = OceanCelerityProfile("Munk")
-    bty = BathymetryProfile("Flat", z = 5e3)
-    Rbot = ReflectionCoefficientProfile("Reflective")
-    ati = AltimetryProfile("Flat")
-    Rsrf = ReflectionCoefficientProfile("Mirror")
+    cel = OceanCelerityProfile(:Munk)
+    bty = BathymetryProfile(:Flat, z = 5e3)
+    Rbot = ReflectionCoefficientProfile(:Reflective)
+    ati = AltimetryProfile(:Flat)
+    Rsrf = ReflectionCoefficientProfile(:Mirror)
 
     @compile_workload begin
         fan = Fan(

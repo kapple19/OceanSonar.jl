@@ -29,8 +29,8 @@ function interactive_raycurves(
             range(min_angle, max_angle, num_rays),
             z₀, r_max, 1e3,
             cel,
-            bty, ReflectionCoefficientProfile("Reflective"),
-            ati, ReflectionCoefficientProfile("Mirror")
+            bty, ReflectionCoefficientProfile(:Reflective),
+            ati, ReflectionCoefficientProfile(:Mirror)
         )
     end
 

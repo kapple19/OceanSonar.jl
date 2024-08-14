@@ -6,3 +6,7 @@ abstract type ModellingContainer <: ModellingType end
 abstract type ModellingComputation <: ModellingType end
 
 children(T::Type{<:ModellingType}) = subtypes(T)
+
+abstract type EnvironmentComponent end
+
+children(T::Type{<:EnvironmentComponent}) = subtypes(T)

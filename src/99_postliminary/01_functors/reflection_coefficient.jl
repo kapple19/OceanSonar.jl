@@ -12,12 +12,13 @@ function (FunctorType::Type{<:ReflectionCoefficientProfile})(
     pars...
 ) where {M}
     modelling_function = ModellingFunction(FunctorType)
-    profile(r::Real, φ::Real) = modelling_function(model, orienter(SDS, r; x₀ = x₀, y₀ = y₀, θ = θ)..., φ; pars...)
-    profile(x::Real, y::Real, φ::Real) = modelling_function(model, orienter(SDS, x, y; x₀ = x₀, y₀ = y₀, θ = θ)..., φ; pars...)
+    profile(r::Real, φ::Real) = modelling_function(model, orient(SDS, r; x₀ = x₀, y₀ = y₀, θ = θ)..., φ; pars...)
+    profile(x::Real, y::Real, φ::Real) = modelling_function(model, orient(SDS, x, y; x₀ = x₀, y₀ = y₀, θ = θ)..., φ; pars...)
     FunctorType{profile |> typeof}(profile)
 end
 
 ## Models
 reflection_coefficient_profile(::ModelName{:Mirror}, x::Real, y::Real, φ::Real) = ComplexF64(-1.0)
 reflection_coefficient_profile(::ModelName{:Absorbent}, x::Real, y::Real, φ::Real) = ComplexF64(0.0)
-reflection_coefficient_profile(::ModelName{:Reflective}, x::Real, y::Real, φ::Real) = ComplexF64(1.0)
+reflection_coefficient_profile(::ModelName{:Reflective}, x::Real, y::Real, φ::Real; ϕ::Real = 0.0) = cis(ϕ)
+reflection_coefficient_profile(::ModelName{:Translucent}, x::Real, y::Real, φ::Real; ϕ::Real = 0.0) = 0.5cis(ϕ)

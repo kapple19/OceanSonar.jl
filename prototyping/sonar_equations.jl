@@ -11,11 +11,11 @@ struct AbsentEntity <: AbstractEntity end
 mutable struct Entity{ET <: EmissionType} <: AbstractEntity
     SL::Float64
     NL::Float64
-    pos::RectangularCoordinate{2}
+    pos::RectangularCoordinate{DownwardDepth}
 end
 
 function Entity{ETnew <: EmissionType}(ent::Entity{ETold}) where {ETold <: EmissionType}
-    Entity{ETnew}(field => getpropert(ent, field) for field in fieldnames(Entity))
+    Entity{ETnew}(field => getproperty(ent, field) for field in fieldnames(Entity))
 end
 
 source_level(own::Entity{Signaling}, tgt::Entity{NoiseOnly}, fac::AbsentEntity = AbsentEntity()) = own.SL
@@ -36,11 +36,11 @@ reverberation_level(env::Environment, prop::SonarPropagation, own::Entity{NoiseO
 reverberation_level(env::Environment, prop::SonarPropagation, own::Entity{NoiseOnly}, tgt::Entity{NoiseOnly}, fac::Entity{Signaling}            ) = reverberation(env, prop, own, fac)
 
 @kwdef struct AcousticConfig
-    beam_model::ModelName = ModelName("Gaussian")
+    beam_model::ModelName = ModelName(:Gaussian)
 end
 
 @kwdef struct PropagationConfig
-    acoustic_config::AcousticConfig = AcousticConfig("BeamTracing")
+    acoustic_config::AcousticConfig = AcousticConfig(:BeamTracing)
 end
 
 struct SonarPropagation
