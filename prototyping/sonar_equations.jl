@@ -4,14 +4,18 @@ abstract type EmissionType end
 struct NoiseOnly <: EmissionType end
 struct Signaling <: EmissionType end
 
-abstract type AbstractEntity{ET <: EmissionType} end
+abstract type AbstractEntity end
 
 struct AbsentEntity <: AbstractEntity end
 
-struct Entity{ET <: EmissionType} <: AbstractEntity
+mutable struct Entity{ET <: EmissionType} <: AbstractEntity
     SL::Float64
     NL::Float64
     pos::RectangularCoordinate{2}
+end
+
+function Entity{ETnew <: EmissionType}(ent::Entity{ETold}) where {ETold <: EmissionType}
+    Entity{ETnew}(field => getpropert(ent, field) for field in fieldnames(Entity))
 end
 
 source_level(own::Entity{Signaling}, tgt::Entity{NoiseOnly}, fac::AbsentEntity = AbsentEntity()) = own.SL
@@ -27,9 +31,9 @@ target_strength(own::Entity{Signaling}, tgt::Entity{NoiseOnly}, fac::AbsentEntit
 target_strength(own::Entity{NoiseOnly}, tgt::Entity,            fac::AbsentEntity = AbsentEntity()) = 0.0
 target_strength(own::Entity{NoiseOnly}, tgt::Entity{NoiseOnly}, fac::Entity{Signaling}            ) = tgt.TS
 
-reverberation_level(env::Environment, prop::Propagation, own::Entity{Signaling}, tgt::Entity{NoiseOnly}, fac::AbsentEntity = AbsentEntity()) = reverberation_level(env, prop, own)
-reverberation_level(env::Environment, prop::Propagation, own::Entity{NoiseOnly}, tgt::Entity,            fac::AbsentEntity = AbsentEntity()) = 0.0
-reverberation_level(env::Environment, prop::Propagation, own::Entity{NoiseOnly}, tgt::Entity{NoiseOnly}, fac::Entity{Signaling}            ) = reverberation(env, prop, own, fac)
+reverberation_level(env::Environment, prop::SonarPropagation, own::Entity{Signaling}, tgt::Entity{NoiseOnly}, fac::AbsentEntity = AbsentEntity()) = reverberation_level(env, prop, own)
+reverberation_level(env::Environment, prop::SonarPropagation, own::Entity{NoiseOnly}, tgt::Entity,            fac::AbsentEntity = AbsentEntity()) = 0.0
+reverberation_level(env::Environment, prop::SonarPropagation, own::Entity{NoiseOnly}, tgt::Entity{NoiseOnly}, fac::Entity{Signaling}            ) = reverberation(env, prop, own, fac)
 
 @kwdef struct AcousticConfig
     beam_model::ModelName = ModelName("Gaussian")
@@ -39,15 +43,15 @@ end
     acoustic_config::AcousticConfig = AcousticConfig("BeamTracing")
 end
 
-struct Propagation
+struct SonarPropagation
     to_ownship
     from_facilitator
 
-    Propagation(config::PropagationConfig, env::Environment, grid::Grid, own::Entity, fac::AbsentEntity = AbsentEntity())
-    Propagation(config::PropagationConfig, env::Environment, grid::Grid, own::Entity, fac::Entity{Signaling})
+    SonarPropagation(config::PropagationConfig, env::Environment, grid::Grid, own::Entity, fac::AbsentEntity = AbsentEntity())
+    SonarPropagation(config::PropagationConfig, env::Environment, grid::Grid, own::Entity, fac::Entity{Signaling})
 end
 
-struct SonarEquation
+struct SonarPerformance
     SL
     TL
     TS
@@ -59,11 +63,11 @@ struct SonarEquation
     SE
     POD
     
-    function SonarEquation(env::Environment, proc::Processing, grid::Grid, own::Entity, tgt::Entity, fac::AbstractEntity = AbsentEntity();
+    function SonarPerformance(env::Environment, proc::Processing, grid::Grid, own::Entity, tgt::Entity, fac::AbstractEntity = AbsentEntity();
             prop_config::PropagationConfig = PropagationConfig()
         )
         SL = source_level(own, tgt, fac)
-        prop = Propagation(prop_config, env, grid, own, fac)
+        prop = SonarPropagation(prop_config, env, grid, own, fac)
         TL = transmission_loss(prop, own, tgt, fac)
         TS = target_strength(own, tgt, fac)
         NL = env.NL ⊕ own.NL
@@ -94,7 +98,7 @@ abstract type CombinedInterference <: Active end
 abstract type ReverberationLimited <: Active end
 abstract type AmbientNoiseLimited <: Active end
 
-sonar_equation(::Sonar) = (SL, PLa, PLb, TS, NL, RL, AG, DT) -> SL - PLa + Ts - PLb + ((NL - AG) ⊕ RL) - DT
+sonar_equation(::Sonar) = (SL, PLa, PLb, TS, NL, RL, AG, DT) -> SL - PLa + TS - PLb + ((NL - AG) ⊕ RL) - DT
 sonar_equation(::Passive) = (SL, PL, NL, AG, DT) -> SL - PL - NL + AG - DT
 sonar_equation(::Narrowband) = () -> NaN
 sonar_equation(::Broadband) = () -> NaN
