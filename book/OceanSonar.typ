@@ -1,11 +1,12 @@
 #import "@preview/unify:0.6.0": unit
 #import "@preview/jlyfish:0.1.0": *
 
-#set heading(numbering: "1.")
+#set heading(numbering: none)
 #set math.equation(numbering: "(1)")
+#set cite(form: "prose")
 
-#show heading.where(level: 1): it => {pagebreak(weak: false);it}
-#show heading.where(level: 2): it => {pagebreak(weak: false);it}
+#show heading.where(level: 1): it => {pagebreak(weak: false); it}
+#show heading.where(level: 2): it => {pagebreak(weak: false); it}
 
 #read-julia-output(json("OceanSonar-jlyfish.json"))
 #jl-pkg(
@@ -18,11 +19,103 @@
 
 #align(center, text(17pt)[Ocean Sonar])
 
+== Preface
+
+The field of ocean sonar finds a variety of scenarios which affect the process by which a sonar's performance is calculated.
+For each scenario, assumptions can be made to simplify the complicated computations with the obvious trade-off with accuracy,
+but even more potentially damaging, a vagueness as to how inaccurate the simplified results are.
+While the sonar equation superficially appears very simple,
+the calculation of each term and the interplay between the terms vary in complexity as the user desires accuracy.
+Even if the modeller desires accuracy,
+the variability and uncertainty of reality ensures that,
+much like weather forecasting,
+there will always be an inaccuracy.
+Thus, past a certain point of modelling accuracy,
+any further attempts at improvement may not be worth the effort,
+or at worst solidify the inaccuracy.
+
+The following anonymous quotation hints at levels of comical relief balanced with frustration at the difficulty of such a field:
+
+#quote(block: true, quotes: true, attribution: [Anonymous])[
+  A sonar engineer is a person who poses as an expert on the basis of being able to produce with prolific fortitude an infinite series of incomprehensible formulae calculated with micromatic precision from vague assumptions based on debatable figures taken from inconclusive experiments carried out with instruments of problematic accuracy by a person of dubious reliability and questionable mentality.
+]
+
+On a more positive note, the near-infinite complexity of the field of ocean sonar
+finds an application of a variety of other fields, including physical oceanography, wave propagation theory, signal processing, and statistical detection theory.
+The array of colleagues I've had the pleasure to learn from have been in the field almost all their lives,
+and they demonstrate a continual spirit of learning.
+An academic enthusiast will find this field a never ending ocean of knowledge for study and exploration,
+ranging from theoretical discoveries via literature to practical experiences at sea.
+
+This book serves multiple purposes.
+First and foremost, it is an organisation of the author's studies on the field.
+Secondly, it is a record of implementations of the field.
+Thirdly, it is publicised as a provision of reproducibility for both theoretical derivations, recorded conclusions and uncertainties, and implementations of numerical algorithms.
+Lastly, it is a demonstration of the utility of the Julia programming language.
+
+The Julia programming language seeks to fill a role not addressed by other programming languages.
+In the words of its creators:
+
+#quote(
+  block: true,
+  quotes: true,
+  attribution: [
+    Why We Created Julia - Jeff Bezanson, Stefan Karpinski, Viral B Shah, Alan Edelman
+  ]
+)[
+  We want a language that's open source, with a liberal license. We want the speed of C with the dynamism of Ruby. We want a language that's homoiconic, with true macros like Lisp, but with obvious, familiar mathematical notation like Matlab. We want something as usable for general programming as Python, as easy for statistics as R, as natural for string processing as Perl, as powerful for linear algebra as Matlab, as good at gluing programs together as the shell. Something that is dirt simple to learn, yet keeps the most serious hackers happy. We want it interactive and we want it compiled.
+
+  (Did we mention it should be as fast as C?)
+
+  While we're being demanding, we want something that provides the distributed power of Hadoop — without the kilobytes of boilerplate Java and XML; without being forced to sift through gigabytes of log files on hundreds of machines to find our bugs. We want the power without the layers of impenetrable complexity. We want to write simple scalar loops that compile down to tight machine code using just the registers on a single CPU. We want to write A*B and launch a thousand computations on a thousand machines, calculating a vast matrix product together.
+]
+
+The complexity of ocean sonar has been found to be most easily implemented in the Julia programming language's paradigm of multiple dispatch and hierarchical type system,
+enabling code that is both performant and accessible.
+
+Lastly, this book was written with as a Typst book, implemented in the Rust programming language
+- a language that fills in the couple of use-case gaps in the Julia programming language.
+
+As an introductory text on ocean sonar,
+the author hopes that this book's linearly structured flow of knowledge,
+explicit explanations of concepts,
+and reproducible numerical computations
+scratches the same itch as the author's for academic enthusiasts interested in the field of ocean sonar.
+
 #outline(depth: 2, indent: auto)
 
-#pagebreak()
+= Introduction
 
+TODO: Introduce this book's structure.
+
+#set heading(numbering: "1.", offset: 0)
 == Pillars of Ocean Sonar
+
+@ainslie aptly defined four academic pillars that uphold the field of ocean sonar. In order of dependency:
+
++ Sonar Oceanography
++ Ocean Acoustics
++ Sonar Signal Processing
++ Statistical Detection Theory
+
+Sonar oceanography explores the physical and biological properties and phenomena of the ocean, particularly as related to underwater sonar.
+
+Ocean acoustics simulates the behaviour of sound in the ocean.
+The parameters explored in sonar oceanography
+are applied as the environment for the acoustic propagation.
+
+Sonar signal processing demonstrates a variety of methods
+for receiving, producing, and analysing acoustic data in a variety of scenarios in the context of the ocean.
+This field is commonly summarised as methods for increasing the signal-to-noise ratio.
+The acoustic propagation behaviours modelled in ocean acoustics
+are major components to the sonar equation.
+
+Statistical detection theory finds its objective in evaluating decision metrics
+for the performance of a modelled sonar.
+The sonar equation finds its completion in this field.
+
+Each of these individual fields are complicated in their own rights,
+and are dedicated chapters within this book.
 
 == Mathematical Preliminaries
 
@@ -32,37 +125,33 @@
 
 ==== Standard Normal Cumulative Distribution Function
 
+=== Probability and Statistics
+
 == Programming Preliminaries
 
 = Sonar Oceanography
 
+== The Ocean Volume
+
+== The Ocean Surface
+
+== The Ocean Bottom
+
+== The Ocean Life
+
 = Ocean Acoustics
+
+== Beam Tracing
+
+== Parabolic Equation
 
 = Sonar Signal Processing
 
+== Signal and Noise Models
+
+== Transducer Array Design
+
 == Sonar Scenarios
-
-#jl(recompute: false, code: true,
-```
-using AbstractTrees: print_tree
-using InteractiveUtils: subtypes
-
-import AbstractTrees: children
-
-abstract type SonarType end
-
-abstract type Passive <: SonarType end
-abstract type Active <: SonarType end
-
-abstract type Narrowband <: Passive end
-abstract type Broadband <: Passive end
-abstract type Intercept <: Passive end
-
-children(::Type{T}) where T <: SonarType = subtypes(T)
-
-print_tree(SonarType)
-```
-)
 
 = Statistical Detection Theory
 
@@ -113,6 +202,18 @@ $
 That is, the $P_f$ is the probability of a false positive,
 and $P_d$ is the probability of a true positive.
 The values of both probabilities need to be under consideration when making a decision as to the presence of a signal.
+
+A pair of values $(P_f, P_d)$ is referred to as an _operating point_.
+The _minimum detectable level_ (MDL) refers to a detection probability of $P_d = 0.5$.
+
+As part of sonar performance evaluation,
+it is often more digestible to utilise the probability metrics in percentages.
+Respectively:
+
+$
+upright("PFA") = 100 P_f \
+upright("POD") = 100 P_d
+$
 
 More generally, the probability metrics above can be expressed in terms of the cumulative distribution function $F_i$ for their respective hypotheses distributions $H_i$ for $i = 0, 1$:
 
@@ -271,10 +372,105 @@ contour(Pf, Pd, d_decibels, labels = true)
 
 == Processing Gain
 
+The _processing gain_ $upright("PG")$ is TODO, expressed as a function of FFT parameters.
+
+The calculation of the processing gain is explored in detail in the following subsections.
+
+=== Broadband
+
+$
+upright("PG") = 5log_(10)("BT")
+$
+
+where
+
+- $B$: Bandwidth [Hz]
+- $T$: Integration Time [sec]
+
+=== Narrowband
+
+$
+upright("PG")
+$
+
 == Detection Threshold
+
+The _detection threshold_ $upright("DT")$ is the signal-to-noise ratio in decibels required to achieve a specific operating point $(P_f, P_d)$.
+
+The detection threshold can be referred to and defined for different stages of the sonar processing chain, which is elaborated in TODO. As a summary:
+
+- The processing band: $upright("SNR")$ at the hydrophone level after filtering to the frequency band of the signal of interest.
+- The beamformer: $upright("SNR")$ after sensor array processing.
+- Linear processing: $upright("SNR")$ after the linear portion of detection processing.
+
+The detection threshold after linear processing is defined as
+
+$
+upright("DT") = 10log_(10)(d) - upright("PG")
+$
+
+where:
+
+- $d$: Detection Index [unitless]
+- $upright("PG")$: Processing Gain [dB]
 
 == Signal Excess
 
+The _signal excess_ $upright("SE")$ is computed from the signal-to-noise ratio calculated from the forward problem,
+and the detection threshold which is essentially the signal-to-noise ratio calculated from the inverse problem.
+The signal excess acts as a convenience metric for a signal-to-noise ratio value of how much a sonar's performance as calculated by the signal-to-noise ratio achieves the required performance specified in the calculation of the detection threshold.
+
+Signal excess is defined as
+
+$
+upright("SE") = upright("SNR") - upright("DT")
+$
+
 == Transition Detection Probability
 
+While the probability of detection as part of an operating point is used to compute the required signal-to-noise ratio (i.e. detection threshold),
+a valuable metric is the devation from the required probability of detection the actual sonar's performance deviates from the required value.
+Such a value is termed the _transition detection probability_ to distinguish from the former detection probability.
+
+The transition detection probability $P_d^t$ is defined as
+
+$
+P_d^t = upright("Pr"){ T >= h | P_d = 0.5, upright("SNR") = upright("DT") + upright("SE")}
+$
+
+which one may note can be obtained by an inversion of the derivations already given throughout this section to obtain $P_d$ as a function of $upright("SE")$.
+
+=== Gaussian Detector Statistic
+
+$
+P_d^t = Phi[(10^(upright("SE") / 10) - 1) times Phi^(-1)(1 - P_f)]
+$
+
 == Figure of Merit
+
+= Ocean Sonar Performance Modelling
+
+The previous chapters have explored topics of ocean sonar in microscopic detail.
+As a conclusion to this book, this chapter amalgamates information from all of the previous chapters,
+Modelling is explored here in macroscopic detail,
+demonstrating the progressive increase in complexity described in the preface.
+
+#set heading(numbering: none)
+
+#bibliography(
+  title: "Academic Bibliography",
+  style: "iso-690-author-date",
+  "academic_bibliography.yml"
+)
+
+= Software Bibliography
+
+Multiple bibliographies are not yet supported.
+
+See software_bibliography.bib for software references.
+
+// #bibliography(
+//   title: "Software Bibliography",
+//   style: "elsevier-harvard",
+//   "software_bibliography.bib"
+// )
