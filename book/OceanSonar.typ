@@ -60,7 +60,7 @@ In the words of its creators:
   block: true,
   quotes: true,
   attribution: [
-    Why We Created Julia - Jeff Bezanson, Stefan Karpinski, Viral B Shah, Alan Edelman
+    Why We Created Julia | Jeff Bezanson, Stefan Karpinski, Viral B Shah, Alan Edelman
   ]
 )[
   We want a language that's open source, with a liberal license. We want the speed of C with the dynamism of Ruby. We want a language that's homoiconic, with true macros like Lisp, but with obvious, familiar mathematical notation like Matlab. We want something as usable for general programming as Python, as easy for statistics as R, as natural for string processing as Perl, as powerful for linear algebra as Matlab, as good at gluing programs together as the shell. Something that is dirt simple to learn, yet keeps the most serious hackers happy. We want it interactive and we want it compiled.
@@ -74,7 +74,7 @@ The complexity of ocean sonar has been found to be most easily implemented in th
 enabling code that is both performant and accessible.
 
 Lastly, this book was written with as a Typst book, implemented in the Rust programming language
-- a language that fills in the couple of use-case gaps in the Julia programming language.
+--- a language that fills in the couple of use-case gaps in the Julia programming language, such as difficulties with complicated race conditions and compact distributable binary sizes.
 
 As an introductory text on ocean sonar,
 the author hopes that this book's linearly structured flow of knowledge,
@@ -88,7 +88,7 @@ scratches the same itch as the author's for academic enthusiasts interested in t
 
 TODO: Introduce this book's structure.
 
-#set heading(numbering: "1.", offset: 0)
+#set heading(numbering: "1.")
 == Pillars of Ocean Sonar
 
 @ainslie aptly defined four academic pillars that uphold the field of ocean sonar. In order of dependency:
@@ -149,7 +149,7 @@ and are dedicated chapters within this book.
 
 == Signal and Noise Models
 
-== Transducer Array Design
+== Acoustic Array Design
 
 == Sonar Scenarios
 
@@ -281,17 +281,47 @@ where $Phi$ is the standard normal CDF, defined here as TODO.
 ```
 using Distributions, CairoMakie
 
-X0dist = Normal(0, 1)
-X1dist = Normal(1, 1)
-X = range(-3, 4, 301)
-X0prob = pdf.(X0dist, X)
-X1prob = pdf.(X1dist, X)
+Xmin = -3
+Xmax = 4
+NX = 301
+
+mu0 = 0
+mu1 = 1
+h = mu0 + 3/4 * (mu1 - mu0)
+
+H0 = Normal(mu0, 1)
+H1 = Normal(mu1, 1)
+X = range(Xmin, Xmax, NX)
+p0 = pdf.(H0, X)
+p1 = pdf.(H1, X)
 
 fig = Figure()
 axis = Axis(fig[1, 1])
 
-lines!(axis, X, X0prob)
-lines!(axis, X, X1prob)
+lines!(axis, X, p0)
+lines!(axis, X, p1)
+
+Xh = range(h, Xmax, NX)
+
+ph0 = pdf.(H0, Xh)
+ph1 = pdf.(H1, Xh)
+
+# suspected Makie.jl bug
+# band!(axis, Xh, zeros(NX), ph0,
+#   color = Makie.LinePattern(
+#     direction = Makie.Vec2f0(1),
+#     linecolor = fill(Makie.RGB(0, 0, 0), NX)
+#   ),
+# )
+# band!(axis, Xh, zeros(NX), ph1,
+#   color = Makie.LinePattern(
+#     direction = Makie.Vec2f0(-1),
+#     linecolor = fill(Makie.RGB(0, 0, 0), NX)
+#   ),
+# )
+
+band!(axis, Xh, zeros(NX), ph0, alpha = 0.1)
+band!(axis, Xh, zeros(NX), ph1, alpha = 0.1)
 
 fig
 ```
@@ -466,8 +496,6 @@ demonstrating the progressive increase in complexity described in the preface.
 = Software Bibliography
 
 Multiple bibliographies are not yet supported.
-
-See software_bibliography.bib for software references.
 
 // #bibliography(
 //   title: "Software Bibliography",
