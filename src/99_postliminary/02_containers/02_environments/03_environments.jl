@@ -1,25 +1,16 @@
 export Environment
 
-mutable struct Environment <: ModellingContainer
-    srf::AcousticInterface{SurfaceInterface}
-    bot::AcousticInterface{BottomInterface}
+@kwdef mutable struct Environment <: ModellingContainer
+    atm::AcousticMedium{AtmosphereMedium} = AcousticMedium{AtmosphereMedium}(:Calm)
+    ocn::AcousticMedium{OceanMedium} = AcousticMedium{OceanMedium}(:Homogeneous)
+    sbd::AcousticMedium{SeabedMedium} = AcousticMedium{SeabedMedium}(:Homogeneous)
+    
+    srf::AcousticInterface{SurfaceInterface} = AcousticInterface{SurfaceInterface}(:Translucent)
+    bot::AcousticInterface{BottomInterface} = AcousticInterface{BottomInterface}(:TranslucentDeep)
+    
+    orienter::Function = (args...) -> orient(SpatialDimensionSize{3}, args...; x₀ = 0.0, y₀ = 0.0, θ = 0.0)
 
-    atm::AcousticMedium{AtmosphereMedium}
-    ocn::AcousticMedium{OceanMedium}
-    sbd::AcousticMedium{SeabedMedium}
-
-    orienter::Function
-
-    function Environment(;
-        ocn::AcousticMedium{OceanMedium} = AcousticMedium{OceanMedium}(:Homogeneous),
-        bot::AcousticInterface{BottomInterface} = AcousticInterface{BottomInterface}(:TranslucentDeep),
-        atm::AcousticMedium{AtmosphereMedium} = AcousticMedium{AtmosphereMedium}(:Calm),
-        srf::AcousticInterface{SurfaceInterface} = AcousticInterface{SurfaceInterface}(:Translucent),
-        sbd::AcousticMedium{SeabedMedium} = AcousticMedium{SeabedMedium}(:Homogeneous),
-        orienter::Function = (args...) -> orient(SpatialDimensionSize{3}, args...; x₀ = 0.0, y₀ = 0.0, θ = 0.0)
-    )
-        new(srf, bot, atm, ocn, sbd, orienter)
-    end
+    NL::Float32 = 0.0
 end
 
 ## Models

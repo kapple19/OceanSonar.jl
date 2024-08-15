@@ -1,6 +1,11 @@
+# General
+_*
+
+# Julia
 /Manifest.toml
 /docs/Manifest.toml
 /docs/build/
 /test/Manifest.toml
 
+# Typst
 *-jlyfish.json

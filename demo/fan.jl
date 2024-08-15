@@ -18,8 +18,8 @@ fan = Fan("Gaussian",
 )
 
 r_ntv = interval(r_min, r_max)
-z_min = r_ntv |> ati |> inf
-z_max = r_ntv |> bty |> sup
+z_min = r_ntv |> scen.env.srf.dpt |> inf
+z_max = r_ntv |> scen.env.bot.dpt |> sup
 
 fig = Figure()
 axis = Axis(fig[1, 1], yreversed = true)
@@ -52,8 +52,8 @@ fan = Fan("Gaussian",
 )
 
 r_ntv = interval(r_min, r_max)
-z_min = r_ntv |> ati |> inf
-z_max = r_ntv |> bty |> sup
+z_min = r_ntv |> scen.env.srf.dpt |> inf
+z_max = r_ntv |> scen.env.bot.dpt |> sup
 
 fig = Figure()
 axis = Axis(fig[1, 1], yreversed = true)
