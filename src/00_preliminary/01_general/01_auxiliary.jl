@@ -13,7 +13,7 @@ const uniquesort! = unique! ∘ sort!
 const cossin = reverse ∘ sincos
 const cossind = reverse ∘ sincosd
 
-magcossin(r::Number, θ::Number) = r .* cossin(θ)
+magcossin(r::Number, ϕ::Number) = r .* cossin(ϕ)
 
 magang(x::Real, y::Real) = ((y, x),) .|> ((hypot, atan) .|> splat)
 magang(z::Number) = z |> reim |> splat(magang)

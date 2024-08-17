@@ -60,10 +60,10 @@ depth_slider = Slider(fig[1, 0],
     snap = true
 )
 
-θ₀s = range(min_angle, max_angle, num_rays)
+φ₀s = range(min_angle, max_angle, num_rays)
 
 function fan2rays(z₀)
-    fan = Fan("Gaussian", θ₀s, z₀, r_max, 1e3, cel, bty, Rbot, ati, Rsrf)
+    fan = Fan("Gaussian", φ₀s, z₀, r_max, 1e3, cel, bty, Rbot, ati, Rsrf)
     beam2ray.(fan.beams)
 end
 

@@ -19,15 +19,15 @@ function AcousticTracingODESystem(
     end
 
     pars = @parameters begin
-        θ₀
+        φ₀
         r₀ = 0.0
         z₀
     end
 
-    ξ₀, ζ₀, p₀, q₀ = beam_initial_conditions(model, f, θ₀, r₀, z₀, c_ocn(r₀, z₀))
+    ξ₀, ζ₀, p₀, q₀ = beam_initial_conditions(model, f, φ₀, r₀, z₀, c_ocn(r₀, z₀))
 
     deps = @variables begin
-        θ(s)::Real = θ₀
+        φ(s)::Real = φ₀
         c(s)::Real # = c_ocn(r₀, z₀)
         A(s)::Real = 1.0
         ϕ(s)::Real = 0
@@ -53,7 +53,7 @@ function AcousticTracingODESystem(
     ∂²c_∂n²_(r′, z′, ξ′, ζ′) = 2∂²c_∂r∂z(r′, z′) * ξ′ * ζ′ - ∂²c_∂r²(r′, z′) * ζ′^2 - ∂²c_∂z²(r′, z′) * ξ′^2
 
     eqns = [
-        θ ~ atan(ζ, ξ)
+        φ ~ atan(ζ, ξ)
         c ~ c_ocn(r, z)
         Ds(A) ~ 0
         Ds(ϕ) ~ 0
@@ -115,13 +115,13 @@ struct Beam{
     s_max::Float64
 
     c::CelerityFunctionType
-    θ::AngleFunctionType
+    φ::AngleFunctionType
     r::RangeFunctionType
     z::DepthFunctionType
     p::PressureFunctionType
 
     # c::Function
-    # θ::Function
+    # φ::Function
     # r::Function
     # z::Function
     # ξ::Function
@@ -145,8 +145,8 @@ struct Beam{
         ζ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.ζ) |> collect
         c(s::Real) = sol(s, idxs = sys.c)
         c(s::AbstractVector{<:Real}) = sol(s, idxs = sys.c) |> collect
-        θ(s::Real) = sol(s, idxs = sys.θ)
-        θ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.θ) |> collect
+        φ(s::Real) = sol(s, idxs = sys.φ)
+        φ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.φ) |> collect
         A(s::Real) = sol(s, idxs = sys.A)
         A(s::AbstractVector{<:Real}) = sol(s, idxs = sys.A) |> collect
         ϕ(s::Real) = sol(s, idxs = sys.ϕ)
@@ -166,18 +166,18 @@ struct Beam{
             beam_pressure(model, s, n;
                 (
                     var => getproperty(beam, var)
-                    for var in (:c, :f, :r, :A, :ϕ, :τ, :p, :q, :θ)
+                    for var in (:c, :f, :r, :A, :ϕ, :τ, :p, :q, :φ)
                 )...
             )
         end
 
-        fcns = (c, θ, r, z, pressure)
+        fcns = (c, φ, r, z, pressure)
 
         new{typeof.(fcns)...}(sol.t[end], fcns..., sol)
     end
 end
 
-show(io::IO, ::MIME"text/plain", beam::Beam) = print(io, "Beam($(beam.θ(0) |> rad2deg)°)")
+show(io::IO, ::MIME"text/plain", beam::Beam) = print(io, "Beam($(beam.φ(0) |> rad2deg)°)")
 
 function (beam::Beam)(s::ArcLengthType, n::NormalDisplacementType) where {
     ArcLengthType <: Union{<:Real, <:AbstractVector{<:Real}},
