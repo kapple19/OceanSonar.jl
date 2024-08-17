@@ -12,13 +12,13 @@ function beam_pressure(::ModelName{:Gaussian},
     c::Union{<:Real, <:AbstractArray{<:Real}},
     r::Union{<:Real, <:AbstractArray{<:Real}},
     A::Union{<:Real, <:AbstractArray{<:Real}},
-    φ::Union{<:Real, <:AbstractArray{<:Real}},
+    ϕ::Union{<:Real, <:AbstractArray{<:Real}},
     τ::Union{<:Real, <:AbstractArray{<:Real}},
     p::Union{<:Real, <:AbstractArray{<:Real}},
     q::Union{<:Real, <:AbstractArray{<:Real}},
     θ::Union{<:Real, <:AbstractArray{<:Real}}
 )
-    return @. complex(A, φ) * sqrt(
+    return @. complex(A, ϕ) * sqrt(
         c / (r * q) * q₀ * f * cos(θ₀)
     ) * cispi(
         -2f * (
@@ -37,7 +37,7 @@ function beam_pressure(model::Model, s::ArcLengthType, n::NormalDisplacementType
     c::Function,
     r::Function,
     A::Function,
-    φ::Function,
+    ϕ::Function,
     τ::Function,
     p::Function,
     q::Function,
@@ -50,7 +50,7 @@ function beam_pressure(model::Model, s::ArcLengthType, n::NormalDisplacementType
     c′ = c(s)
     r′ = r(s)
     A′ = A(s)
-    φ′ = φ(s)
+    ϕ′ = ϕ(s)
     p′ = p(s)
     q′ = q(s)
     τ′ = τ(s)
@@ -58,6 +58,6 @@ function beam_pressure(model::Model, s::ArcLengthType, n::NormalDisplacementType
     return @. beam_pressure(model, 
         n, f,
         c(0), θ(0), q(0),
-        c(s), r(s), A(s), φ(s), τ(s), p(s), q(s), θ(s)
+        c(s), r(s), A(s), ϕ(s), τ(s), p(s), q(s), θ(s)
     )
 end

@@ -11,7 +11,7 @@ function reflect!(ntg::ODEIntegrator, vars::NamedTuple, pars::NamedTuple, ctx::T
     ξ = ntg.u[vars.ξ]
     ζ = ntg.u[vars.ζ]
     A = ntg.u[vars.A]
-    φ = ntg.u[vars.φ]
+    ϕ = ntg.u[vars.ϕ]
     p = ntg.u[vars.p_re] + im * ntg.u[vars.p_im]
     q = ntg.u[vars.q_re] + im * ntg.u[vars.q_im]
 
@@ -57,7 +57,7 @@ function reflect!(ntg::ODEIntegrator, vars::NamedTuple, pars::NamedTuple, ctx::T
     R = R_ntf(r, (θ_inc_deg - θ_bnd_deg) |> abs)
 
     ntg.u[[vars.ξ, vars.ζ]] .= cossind(θ_rfl_deg) ./ c
-    ntg.u[[vars.A, vars.φ]] .= [A * abs(R), φ + angle(R)]
+    ntg.u[[vars.A, vars.ϕ]] .= [A * abs(R), ϕ + angle(R)]
     ntg.u[[vars.p_re, vars.p_im]] .= reim(p + q * N)
 
     nothing

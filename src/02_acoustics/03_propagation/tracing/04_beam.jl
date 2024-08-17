@@ -30,7 +30,7 @@ function AcousticTracingODESystem(
         θ(s)::Real = θ₀
         c(s)::Real # = c_ocn(r₀, z₀)
         A(s)::Real = 1.0
-        φ(s)::Real = 0
+        ϕ(s)::Real = 0
         τ(s)::Real = 0.0
 		r(s)::Real = r₀
 		z(s)::Real = z₀
@@ -56,7 +56,7 @@ function AcousticTracingODESystem(
         θ ~ atan(ζ, ξ)
         c ~ c_ocn(r, z)
         Ds(A) ~ 0
-        Ds(φ) ~ 0
+        Ds(ϕ) ~ 0
         Ds(τ) ~ 1 / c_ocn(r, z)
         Ds(r) ~ c_ocn(r, z) * ξ
         Ds(z) ~ c_ocn(r, z) * ζ
@@ -75,7 +75,7 @@ function AcousticTracingODESystem(
 
     surface_reflection = [z ~ z_ati(r)] => (
         reflect!,
-        [r, z, ξ, ζ, A, φ, p_re, p_im, q_re, q_im],
+        [r, z, ξ, ζ, A, ϕ, p_re, p_im, q_re, q_im],
         [],
         [],
         (:surface, c_ocn, z_ati, R_srf)
@@ -83,7 +83,7 @@ function AcousticTracingODESystem(
 
     bottom_reflection = [z ~ z_bty(r)] => (
         reflect!,
-        [r, z, ξ, ζ, A, φ, p_re, p_im, q_re, q_im],
+        [r, z, ξ, ζ, A, ϕ, p_re, p_im, q_re, q_im],
         [],
         [],
         (:bottom, c_ocn, z_bty, R_btm)
@@ -127,7 +127,7 @@ struct Beam{
     # ξ::Function
     # ζ::Function
     # A::Function
-    # φ::Function
+    # ϕ::Function
     # τ::Function
     # p::Function
     # q::Function
@@ -149,8 +149,8 @@ struct Beam{
         θ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.θ) |> collect
         A(s::Real) = sol(s, idxs = sys.A)
         A(s::AbstractVector{<:Real}) = sol(s, idxs = sys.A) |> collect
-        φ(s::Real) = sol(s, idxs = sys.φ)
-        φ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.φ) |> collect
+        ϕ(s::Real) = sol(s, idxs = sys.ϕ)
+        ϕ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.ϕ) |> collect
         τ(s::Real) = sol(s, idxs = sys.τ)
         τ(s::AbstractVector{<:Real}) = sol(s, idxs = sys.τ) |> collect
 
@@ -166,7 +166,7 @@ struct Beam{
             beam_pressure(model, s, n;
                 (
                     var => getproperty(beam, var)
-                    for var in (:c, :f, :r, :A, :φ, :τ, :p, :q, :θ)
+                    for var in (:c, :f, :r, :A, :ϕ, :τ, :p, :q, :θ)
                 )...
             )
         end
