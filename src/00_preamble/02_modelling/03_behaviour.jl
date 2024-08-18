@@ -1,0 +1,1 @@
+(osm::OceanSonarModel)(M::Union{Symbol, <:AbstractString}, args...; kw...) = osm(Model(M), args...; kw...)
