@@ -1,8 +1,8 @@
 @kwdef mutable struct Performance
     model::Model{M} where {M} = Model{:Bistatic}
 
-    ownship::PresentEntity
-    target::PresentEntity
+    ownship::Entity
+    target::Entity
     catalyst::AbstractEntity
 end
 

@@ -22,7 +22,7 @@ lines!(axis, r, PL)
 PL = @. pressure_field("Bottom Lloyd Mirror", r, z, z₀, z_bot, λ, c) |> propagation_loss
 lines!(axis, r, PL)
 
-PL = @. pressure_field("Generic Lloyd Mirror", r, z, z₀, z_bot, λ, c) |> propagation_loss
+PL = @. pressure_field("Single Reflection Lloyd Mirror", r, z, z₀, z_bot, λ, c) |> propagation_loss
 lines!(axis, r, PL)
 
 display(fig)

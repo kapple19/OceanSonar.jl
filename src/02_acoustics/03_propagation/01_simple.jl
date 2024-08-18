@@ -73,9 +73,26 @@ function pressure_field(
 end
 
 function pressure_field(
-    ::Model{:GenericLloydMirror},
+    ::Model{:SingleReflectionLloydMirror},
     r::Real, z::Real, z₀::Real, z_bot::Real,
     λ::Real, c::Real = 1500, t::Real = 0
 )
     return pressure_field(:SphericalSpreading, r, z, λ, c, t, z₀) + pressure_field(:SurfaceReflection, r, z, z₀, λ, c, t) + pressure_field(:BottomReflection, r, z, z₀, z_bot, λ, c, t)
+end
+
+function pressure_field(
+    ::Model{:FlatMultipath},
+    r::Real, z::Real, z₀::Real, z_bot::Real,
+    λ::Real, c::Real = 1500, t::Real = 0
+)
+    for n in 1:5
+        d = floor((n - 1) / 2)
+        d += mod(n, 0) ? 2z_bot - z : z
+
+        for m in [-1, 1]
+            d += m * z₀
+
+            s = hypot(d, r)
+        end
+    end
 end
