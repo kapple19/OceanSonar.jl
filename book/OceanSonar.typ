@@ -1,4 +1,4 @@
-#import "@preview/unify:0.6.0": unit
+#import "@preview/unify:0.6.0": unit, qty
 #import "@preview/jlyfish:0.1.0": *
 
 #set heading(numbering: none)
@@ -140,6 +140,25 @@ and are dedicated chapters within this book.
 == The Ocean Life
 
 = Ocean Acoustics
+
+According to ISO 19405:2017 items 3.4.1.3 and 3.4.1.4:
+
+- Propagation loss is the #quote[
+  difference between _source level_ (3.3.2.1) in a specified direction, $L_S$,
+  and _mean-square sound pressure level_ (3.2.1.1), $L_(p)(bold(x))$, at a specified position $bold(x)$.
+] #quote[
+  Propagation loss is expressed in decibels (dB).
+] #quote[
+  The reference value for propagation loss is #qty(1, "m^2").
+]
+
+- Transmission loss is the #quote[
+  reduction in a specified level between two specified points $bold(x)_1$, $bold(x)_1$ that are within an underwater acoustic field.
+] #quote[
+  Transmission loss is expressed in decibels (dB).
+]
+
+- #quote[The term "transmission loss" is sometimes used as a synonym of propagation loss (3.4.1.4). This use is deprecated.]
 
 == Beam Tracing
 
