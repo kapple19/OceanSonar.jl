@@ -1,0 +1,1 @@
+{"1":{"result":{"mime":"text/plain","failed":false,"data":"4"},"stdout":"","logs":[],"code":"f(2)"},"0":{"result":{"mime":"text/plain","failed":false,"data":"f (generic function with 1 method)"},"stdout":"","logs":[],"code":"f(x) = x^2"}}
