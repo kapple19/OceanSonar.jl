@@ -21,7 +21,7 @@ function Propagation(::Model{:Simple},
         )
     end
 
-    p = [propagate(r, θ, z) for r in ranges, θ in azimuths, z in depths]
+    p = [propagate(r, z, θ) for r in ranges, z in depths, θ in azimuths]
 
     Propagation(ranges, azimuths, depths, p, p .|> propagation_loss)
 end
