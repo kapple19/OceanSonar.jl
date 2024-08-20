@@ -1,7 +1,7 @@
 export listmodels
 export listarguments
 
-function listmodels(::Type{Model}, fcn::MetricFunction)
+function listmodels(::Type{Model}, fcn::ModelFunction)
     meths = methods(fcn)
     first_arg_types = [
         meth.sig.types[2]
@@ -15,27 +15,27 @@ function listmodels(::Type{Model}, fcn::MetricFunction)
     ]
 end
 
-listmodels(::Type{Symbol}, fcn::MetricFunction) = listmodels(Model, fcn) .|> Symbol
-listmodels(::Type{String}, fcn::MetricFunction) = listmodels(Model, fcn) .|> String
+listmodels(::Type{Symbol}, fcn::ModelFunction) = listmodels(Model, fcn) .|> Symbol
+listmodels(::Type{String}, fcn::ModelFunction) = listmodels(Model, fcn) .|> String
 
 """
 ```
-listmodels(fcn::MetricFunction)
+listmodels(fcn::ModelFunction)
 ```
 
 Returns the names of `fcn` models as a `Vector` of `String`s formatted with `titletext`.
 
 Each element of the output can be used as the first positional argument to `fcn`.
 
-See also: [`listarguments`](@ref), [`Model`](@ref), [`OceanSonar.MetricFunction`](@ref).
+See also: [`listarguments`](@ref), [`Model`](@ref), [`OceanSonar.ModelFunction`](@ref).
 """
-listmodels(fcn::MetricFunction) = listmodels(Model, fcn) .|> titletext
+listmodels(fcn::ModelFunction) = listmodels(Model, fcn) .|> titletext
 
 """
 ```
-listarguments(fcn::MetricFunction, model::String)
-listarguments(fcn::MetricFunction, model::Symbol)
-listarguments(fcn::MetricFunction, model::Model)
+listarguments(fcn::ModelFunction, model::String)
+listarguments(fcn::ModelFunction, model::Symbol)
+listarguments(fcn::ModelFunction, model::Model)
 ```
 
 Lists the inputs (positional arguments) and parameters (keyword arguments)
@@ -45,7 +45,7 @@ with fields `inputs` and `parameters`.
 While `InteractiveUtils.methodswith` gives similar information,
 `listarguments` provides the argument names in a useable form.
 """
-function listarguments(fcn::MetricFunction, model::Model)
+function listarguments(fcn::ModelFunction, model::Model)
     @assert model in listmodels(Model, fcn)
     meths = methodswith(model |> typeof, fcn)
     inpss = @. method_argnames(meths)
@@ -59,6 +59,6 @@ function listarguments(fcn::MetricFunction, model::Model)
     ]
 end
 
-function listarguments(fcn::MetricFunction, model::Union{Symbol, <:AbstractString})
+function listarguments(fcn::ModelFunction, model::Union{Symbol, <:AbstractString})
     listarguments(fcn, model |> Model)
 end

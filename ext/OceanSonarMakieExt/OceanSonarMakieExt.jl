@@ -1,45 +1,29 @@
-"""
-`OceanSonar::Module`
-
-Contains a library of ocean sonar numerical modelling implementations.
-
-The main features are:
-
-* In development.
-
-Some auxiliary functionalities are also provided:
-
-* [`textstyle`](@ref) applies a rigorous heuristic for converting between text case styles.
-
-The following extensions have been implemented:
-
-* In development.
-
-See the documentation website (in development) for more information.
-"""
-module OceanSonar
-
-## Re-exports
-export Fix1
+module OceanSonarMakieExt
 
 ## Imports
-import Base:
-    show
+import Makie:
+    convert_arguments,
+    plot!
 
-using Base:
-    Fix1,
-    kwarg_decl,
-    method_argnames
+using Makie:
+    AbstractAxis,
+    Axis,
+    current_axis,
+    Figure,
+    FigureAxisPlot,
+    lines!,
+    Theme,
+    @recipe
 
-import Base.Docs:
-    getdoc
-
-import Core:
-    String,
-    Symbol
-
-using InteractiveUtils:
-    methodswith
+import OceanSonar:
+    OceanAxis2D,
+    soundspeedlines2d,
+    soundspeedlines2d!,
+    visual,
+    visual!
+    
+using OceanSonar:
+    Model
 
 ## Implementation
 """

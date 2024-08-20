@@ -2,6 +2,13 @@ public MetricFunction
 public metric_functions
 
 """
+`ModelFunction`
+
+Abstract supertype of all `OceanSonar`'s `Model`-dispatching functions.
+"""
+abstract type ModelFunction <: Function end
+
+"""
 ```
 OceanSonar.MetricFunction <: Function
 ```
@@ -23,10 +30,10 @@ sound_speed("My Model", 1e3)
 
 See also: [`Model`](@ref).
 """
-abstract type MetricFunction <: Function end
+abstract type MetricFunction <: ModelFunction end
 
-function (fcn::MetricFunction)(model::Union{Symbol, <:AbstractString}, args...; kw...)
-    fcn(Model(model), args...; kw...)
+function (fcn::ModelFunction)(model::Union{Symbol, <:AbstractString}, args...; kws...)
+    fcn(Model(model), args...; kws...)
 end
 
 function getdoc(MetricFunctionSubtype::Type{<:MetricFunction})

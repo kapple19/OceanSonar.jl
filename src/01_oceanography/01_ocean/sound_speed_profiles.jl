@@ -1,5 +1,6 @@
 export sound_speed_profile
 
+## Implementation
 @implement_metric_function sound_speed_profile
 
 @doc """
@@ -14,6 +15,21 @@ Subtypes [`OceanSonar.MetricFunction`](@ref).
 """
 sound_speed_profile
 
+## Visualisation
+"""
+```
+soundspeedlines2d
+soundspeedlines2d!
+```
+
+Plotting functions. Methods to be populated by `Makie` extension.
+"""
+function soundspeedlines2d end
+
+@doc (@doc soundspeedlines2d)
+function soundspeedlines2d! end
+
+## Models
 """
 ```
 sound_speed_profile(::Model{:Homogeneous}; c::Real = 1500.0) = c

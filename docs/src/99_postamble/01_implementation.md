@@ -72,3 +72,32 @@ with `listarguments`:
 ```@docs
 listarguments
 ```
+
+## Visualisation
+
+The `visual` and `visual!` functions have methods described throughout the documentation,
+flexibly catering to the variety of types of plots that ocean sonar modelling
+benefits from.
+
+Internally `visual` and `visual!` dispatch on the first argument's `Model` specification
+to specific `Makie` plotting recipes defined by the extension package `OceanSonarMakieExt`.
+Due to the nature of extensions,
+such plotting recipe functions are defined with no arguments in `OceanSonar`
+then `imported` for overloading in the extension package.
+
+```@docs
+visual
+visual!
+```
+
+```@example
+using OceanSonar, CairoMakie
+listmodels(visual)
+```
+
+Supporting the creation of ocean metric visualisations
+is the `OceanAxis2D` function:
+
+```@docs
+OceanAxis2D
+```

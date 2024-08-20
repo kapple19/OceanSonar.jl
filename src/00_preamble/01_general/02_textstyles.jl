@@ -31,7 +31,8 @@ to keep tokenised and keep their text styles
 const keeptokens = [
     "a"; "to"; "the"
     "NSW";
-    (["UL", "VL", "L", "M", "H", "VH", "UH"] .* "F")
+    (["UL", "VL", "L", "M", "H", "VH", "UH"] .* "F");
+    string.(1:3, "D")...
 ] |> uniquesort!
 
 """
