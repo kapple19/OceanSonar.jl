@@ -1,0 +1,5 @@
+# Auxiliary Implementations
+
+```@docs
+uniquesort!
+```

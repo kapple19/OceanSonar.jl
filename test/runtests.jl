@@ -1,14 +1,18 @@
-using OceanSonar
 using Test
-using Aqua
-using JET
+using SafeTestsets
 
-@testset "OceanSonar.jl" begin
-    @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(OceanSonar)
+@testset verbose = true "OceanSonar.jl" begin
+    name = "Code Quality"
+    @time @testset "$name" begin
+        @info "Testing $name"
+        @safetestset "Aqua" include("00_code_quality/aqua.jl")
+        @safetestset "Linting" include("00_code_quality/linting.jl")
+        @safetestset "Docstrings" include("00_code_quality/docstrings.jl")
     end
-    @testset "Code linting (JET.jl)" begin
-        JET.test_package(OceanSonar; target_defined_modules = true)
+
+    name = "Preamble Tests"
+    @time @testset "$name" begin
+        @info "Testing $name"
+        @safetestset "Text Cases" include("00_preamble/textstyles.jl")
     end
-    # Write your tests here.
 end
