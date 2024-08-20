@@ -172,6 +172,7 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
 
 [[deps.OceanSonar]]
+deps = ["AbstractTrees", "InteractiveUtils"]
 path = "C:\\Users\\Aaron\\.julia\\dev\\OceanSonar"
 uuid = "03019ade-4524-4ecd-af79-46d4f04a1b56"
 version = "1.0.0-DEV"

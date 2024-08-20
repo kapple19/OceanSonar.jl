@@ -2,7 +2,7 @@
 
 julia_version = "1.11.0-rc2"
 manifest_format = "2.0"
-project_hash = "c31c70e376fb0af6b22375790fe5a79d2c770ae3"
+project_hash = "a80f897e5c8e4eb28e38f55c302f762b0cbcaf09"
 
 [[deps.Aqua]]
 deps = ["Compat", "Pkg", "Test"]
@@ -54,6 +54,11 @@ version = "1.6.0"
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 version = "1.11.0"
+
+[[deps.HashArrayMappedTries]]
+git-tree-sha1 = "2eaa69a7cab70a52b9687c8bf950a5a93ec895ae"
+uuid = "076d061b-32b6-4027-95e0-9a2c6f6d7e74"
+version = "0.2.0"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -176,6 +181,12 @@ deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 version = "1.11.0"
 
+[[deps.RequiredInterfaces]]
+deps = ["InteractiveUtils", "Logging", "Test"]
+git-tree-sha1 = "c3250333ea2894237ed015baf7d5fcb8a1ea3169"
+uuid = "97f35ef4-7bc5-4ec1-a41a-dcc69c7308c6"
+version = "0.1.6"
+
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
@@ -185,9 +196,25 @@ git-tree-sha1 = "81ec49d645af090901120a1542e67ecbbe044db3"
 uuid = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 version = "0.1.0"
 
+[[deps.ScopedValues]]
+deps = ["HashArrayMappedTries", "Logging"]
+git-tree-sha1 = "eef2fbac9538ee6cc60ee1489f028d2f8a1a5249"
+uuid = "7e506255-f358-4e82-b7e4-beb19740aa63"
+version = "1.2.1"
+
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 version = "1.11.0"
+
+[[deps.StyledStrings]]
+uuid = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
+version = "1.11.0"
+
+[[deps.Supposition]]
+deps = ["Logging", "Pkg", "PrecompileTools", "Printf", "Random", "RequiredInterfaces", "ScopedValues", "Serialization", "StyledStrings", "Test"]
+git-tree-sha1 = "3a214d299ae8bfb8bee0eaf293690667d2ee80d8"
+uuid = "5a0628fe-1738-4658-9b6d-0b7605a9755b"
+version = "0.3.5"
 
 [[deps.TOML]]
 deps = ["Dates"]

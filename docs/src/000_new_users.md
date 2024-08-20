@@ -3,7 +3,7 @@
 "New" could apply to users as some combination of:
 
 ```@contents
-Pages = ["00_new_users.md"]
+Pages = ["000_new_users.md"]
 Depth = 2:2
 ```
 

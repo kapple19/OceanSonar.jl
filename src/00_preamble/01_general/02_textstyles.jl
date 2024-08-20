@@ -2,7 +2,7 @@ export textstyle
 export titletext
 export snaketext
 export pascaltext
-# public keeptokens
+public keeptokens
 
 """
 ```
@@ -78,10 +78,10 @@ end
 """
 ```
 textstyle(
-    newstyle::Union{Symbol, AbstractString},
-    oldtext::AbstractString
+    newstyle :: Union{Symbol, <:AbstractString},
+    oldtext :: Union{Symbol, <:AbstractString, <:Model{M}} where {M}
     ;
-    keeptokens::AbstractVector{<:AbstractString} = OceanSonar.keeptokens
+    keeptokens :: AbstractVector{<:AbstractString} = OceanSonar.keeptokens
 )
 ```
 
@@ -95,8 +95,8 @@ Implemented text styles:
 * `:camel`: As `:pascal` but the very first character of `text` is lowercase.
 * `:Snake`: Underscore-delimited tokens; tokens' first character uppercased except `keeptokens` preserved.
 * `:snake`: Underscore-delimited tokens; tokens' first character lowercased except `keeptokens` preserved.
-* `:Kebab`: Dash-delimited tokens; tokens' first character uppercased except `keeptokens`.
-* `:kebab`: Dash-delimited tokens; tokens' first character lowercased except `keeptokens`.
+* `:Kebab`: Hyphen-delimited tokens; tokens' first character uppercased except `keeptokens`.
+* `:kebab`: Hyphen-delimited tokens; tokens' first character lowercased except `keeptokens`.
 
 Examples of implemented text styles:
 
@@ -193,6 +193,10 @@ function textstyle(::Val{:title}, text::AbstractString; keeptokens = keeptokens)
     return textstyle(Val(:Space), text; keeptokens = keeptokens)
 end
 
+function textstyle(val::Val, text::Union{Symbol, <:AbstractString}; keeptokens = keeptokens)
+    return textstyle(val, text |> String; keeptokens = keeptokens)
+end
+
 """
 ```
 titletext(text) -> ::AbstractString
@@ -205,10 +209,16 @@ Converts the inputted `text` to the named text case style.
 Convenience functions for [`textstyle`](@ref),
 internally calls e.g. `textstyle(:title, text)`.
 """
-function titletext(text) textstyle(Val(:title), text) end
+function titletext(text; keeptokens = keeptokens)
+    return textstyle(Val(:title), text; keeptokens = keeptokens)
+end
 
 @doc (@doc titletext)
-function pascaltext(text) textstyle(Val(:pascal), text) end
+function pascaltext(text; keeptokens = keeptokens)
+    return textstyle(Val(:pascal), text; keeptokens = keeptokens)
+end
 
 @doc (@doc titletext)
-function snaketext(text) textstyle(Val(:snake), text) end
+function snaketext(text; keeptokens = keeptokens)
+    return textstyle(Val(:snake), text; keeptokens = keeptokens)
+end

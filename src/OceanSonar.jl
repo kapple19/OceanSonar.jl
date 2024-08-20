@@ -19,6 +19,25 @@ See the documentation website (in development) for more information.
 """
 module OceanSonar
 
+## Imports
+import Base:
+    show
+
+using Base:
+    kwarg_decl,
+    method_argnames
+
+import Base.Docs:
+    getdoc
+
+import Core:
+    String,
+    Symbol
+
+using InteractiveUtils:
+    methodswith
+
+## Implementation
 """
 ```
 OceanSonar.include_subroots(path::AbstractString)
