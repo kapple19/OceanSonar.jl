@@ -38,8 +38,13 @@ import Core:
     String,
     Symbol
 
+using DataInterpolations:
+    LinearInterpolation
+
 using InteractiveUtils:
     methodswith
+
+using NaNMath
 
 ## Implementation
 """

@@ -4,7 +4,9 @@ authors = ["Aaron Kaw <aaronjkaw@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
 [deps]
+DataInterpolations = "82cc6244-b520-54b8-b5a6-8a565e85f1d0"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+NaNMath = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 
 [weakdeps]
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
@@ -13,6 +15,8 @@ Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 OceanSonarMakieExt = "Makie"
 
 [compat]
+DataInterpolations = "6.2.0"
 InteractiveUtils = "1.11.0"
 Makie = "0.21.7"
+NaNMath = "1.0.2"
 julia = "1.10"

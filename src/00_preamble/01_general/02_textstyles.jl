@@ -2,7 +2,7 @@ export textstyle
 export titletext
 export snaketext
 export pascaltext
-public keeptokens
+public KEEPTOKENS
 
 """
 ```
@@ -20,7 +20,7 @@ const textstyleseps = (
 
 """
 ```
-OceanSonar.keeptokens
+OceanSonar.KEEPTOKENS
 ```
 
 Used by [`textstyle`](@ref).
@@ -28,7 +28,7 @@ Used by [`textstyle`](@ref).
 to keep tokenised and keep their text styles
 (for certain text style conversions by `textstyle`).
 """
-const keeptokens = [
+const KEEPTOKENS = [
     "a"; "to"; "the"
     "NSW";
     (["UL", "VL", "L", "M", "H", "VH", "UH"] .* "F");
@@ -36,14 +36,14 @@ const keeptokens = [
 ] |> uniquesort!
 
 """
-`_textstyle_casify_token(newstyle, token; keeptokens = OceanSonar.keeptokens)`
+`_textstyle_casify_token(newstyle, token; keeptokens = OceanSonar.KEEPTOKENS)`
 
 Converts a single token to its specified `newstyle`.
 """
 function _textstyle_casify_token(
     newstyle::AbstractString,
     token::AbstractString;
-    keeptokens::AbstractVector{<:AbstractString} = keeptokens
+    keeptokens::AbstractVector{<:AbstractString} = KEEPTOKENS
 )
     token = lowercase(token)
 
@@ -82,7 +82,7 @@ textstyle(
     newstyle :: Union{Symbol, <:AbstractString},
     oldtext :: Union{Symbol, <:AbstractString, <:Model{M}} where {M}
     ;
-    keeptokens :: AbstractVector{<:AbstractString} = OceanSonar.keeptokens
+    keeptokens :: AbstractVector{<:AbstractString} = OceanSonar.KEEPTOKENS
 )
 ```
 
@@ -101,18 +101,18 @@ Implemented text styles:
 
 Examples of implemented text styles:
 
-* `:Space`: "Say 32 Big Goodbyes to 1 Cruel NSW 1st World"
-* `:space`: "say 32 big goodbyes to 1 cruel NSW 1st world"
-* `:pascal`: "Say32BigGoodbyesTo1CruelNSW1stWorld"
-* `:camel`: "say32BigGoodbyesTo1CruelNSW1stWorld"
-* `:Snake`: "Say_32_Big_Goodbyes_to_1_Cruel_NSW_1st_World"
-* `:snake`: "say_32_big_goodbyes_to_1_cruel_NSW_1st_world"
-* `:Kebab`: "Say-32-Big-Goodbyes-to-1-Cruel-NSW-1st-World"
-* `:kebab`: "say-32-big-goodbyes-to-1-cruel-NSW-1st-world"
+* `:Space`: `"Say 32 Big Goodbyes to 1 Cruel NSW 1st World"`
+* `:space`: `"say 32 big goodbyes to 1 cruel NSW 1st world"`
+* `:pascal`: `"Say32BigGoodbyesTo1CruelNSW1stWorld"`
+* `:camel`: `"say32BigGoodbyesTo1CruelNSW1stWorld"`
+* `:Snake`: `"Say_32_Big_Goodbyes_to_1_Cruel_NSW_1st_World"`
+* `:snake`: `"say_32_big_goodbyes_to_1_cruel_NSW_1st_world"`
+* `:Kebab`: `"Say-32-Big-Goodbyes-to-1-Cruel-NSW-1st-World"`
+* `:kebab`: `"say-32-big-goodbyes-to-1-cruel-NSW-1st-world"`
 
 The `title` case behaves differently from `Base.Unicode.titlecase`, e.g.
 
-```julia
+```jldoctest
 julia> titlecase("say-32-big-goodbyes-to-1-cruel-NSW-1st-world")
 "Say-32-Big-Goodbyes-To-1-Cruel-Nsw-1St-World"
 
@@ -129,7 +129,7 @@ The following convenience methods are also exported:
 function textstyle(
     v::V,
     text::AbstractString;
-    keeptokens::AbstractVector{<:AbstractString} = keeptokens
+    keeptokens::AbstractVector{<:AbstractString} = KEEPTOKENS
 )::AbstractString where {
     V <: Union{
         Val{:snake}, Val{:space}, Val{:kebab},
@@ -181,21 +181,29 @@ function textstyle(
     return join(tokens, sep)
 end
 
-function textstyle(::Val{:camel}, text::AbstractString; keeptokens = keeptokens)
+function textstyle(::Val{:camel}, text::AbstractString; keeptokens = KEEPTOKENS)
     text = textstyle(Val(:Pascal), text; keeptokens = keeptokens)
     return lowercase(text[1]) * (length(text) > 1 ? text[2:end] : "")
 end
 
-function textstyle(::Val{:pascal}, text::AbstractString; keeptokens = keeptokens)
+function textstyle(::Val{:pascal}, text::AbstractString; keeptokens = KEEPTOKENS)
     return textstyle(Val(:Pascal), text; keeptokens = keeptokens)
 end
 
-function textstyle(::Val{:title}, text::AbstractString; keeptokens = keeptokens)
+function textstyle(::Val{:title}, text::AbstractString; keeptokens = KEEPTOKENS)
     return textstyle(Val(:Space), text; keeptokens = keeptokens)
 end
 
-function textstyle(val::Val, text::Union{Symbol, <:AbstractString}; keeptokens = keeptokens)
-    return textstyle(val, text |> String; keeptokens = keeptokens)
+function textstyle(newstyle::Val, text::Union{Symbol, <:AbstractString}; keeptokens = KEEPTOKENS)
+    return textstyle(newstyle, text |> String; keeptokens = keeptokens)
+end
+
+function textstyle(newstyle::Symbol, text::Union{Symbol, <:AbstractString}; keeptokens = KEEPTOKENS)
+    return textstyle(newstyle |> Val, text |> String; keeptokens = keeptokens)
+end
+
+function textstyle(newstyle::AbstractString, text::Union{Symbol, <:AbstractString}; keeptokens = KEEPTOKENS)
+    return textstyle(newstyle |> Symbol, text |> String; keeptokens = keeptokens)
 end
 
 """
@@ -210,16 +218,16 @@ Converts the inputted `text` to the named text case style.
 Convenience functions for [`textstyle`](@ref),
 internally calls e.g. `textstyle(:title, text)`.
 """
-function titletext(text; keeptokens = keeptokens)
+function titletext(text; keeptokens = KEEPTOKENS)
     return textstyle(Val(:title), text; keeptokens = keeptokens)
 end
 
 @doc (@doc titletext)
-function pascaltext(text; keeptokens = keeptokens)
+function pascaltext(text; keeptokens = KEEPTOKENS)
     return textstyle(Val(:pascal), text; keeptokens = keeptokens)
 end
 
 @doc (@doc titletext)
-function snaketext(text; keeptokens = keeptokens)
+function snaketext(text; keeptokens = KEEPTOKENS)
     return textstyle(Val(:snake), text; keeptokens = keeptokens)
 end

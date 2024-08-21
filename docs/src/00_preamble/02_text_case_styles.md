@@ -11,3 +11,7 @@ titletext
 pascaltext
 snaketext
 ```
+
+```@docs; canonical = false
+OceanSonar.KEEPTOKENS
+```

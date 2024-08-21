@@ -29,7 +29,7 @@ It is a specialised version of [`Base.Val`](https://docs.julialang.org/en/v1/bas
 so users can call models by their name in a string or a symbol.
 For example:
 
-```@repl
+```@repl simple_extension_example
 using OceanSonar
 import OceanSonar: sound_speed_profile
 sound_speed_profile(::Model{:MyModel}, z) = 1500 + exp(-z^2)
