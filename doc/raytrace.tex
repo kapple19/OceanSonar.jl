@@ -1,0 +1,87 @@
+\chapter{Ray Method}
+The ray method is based upon the following derivation:
+\begin{enumerate}
+	\item Start with the wave equation:
+	\begin{align}
+		\pdv{\rho}{t} &= -\nabla \cdot \rho \vec{v}
+	\end{align}
+
+	\item  to obtain the Helmholtz equation:
+	\begin{align}
+		helmholtz
+	\end{align}
+
+	\item Substitute:
+	\begin{itemize}
+		\item $k^2(\vec{r}) = \omega / c(\vec{r})$
+		\item 
+	\end{itemize}
+	into the Helmholtz equation to obtain:
+	\begin{align}
+		\tag{TODO}
+	\end{align}
+
+	\item Assume solution of the form:
+	\begin{align}
+		p(\vec{x}) &= e^{i\omega\tau(x)} \sum_{j=0}^\infty \frac{A_j(\vec{x})}{(i\omega)^j}.
+	\end{align}
+
+	\item Substitute solution into Helmholtz equation.
+
+	\item Equate like terms to obtain $\mathcal{O}(\omega^2)$ and $\mathcal{O}(\omega)$ equations respectively as
+	\begin{align}
+		\Abs{\nabla\tau}^2 &= \frac{1}{c(\vec{x})^2} \tag{eikonal equation} \\
+		2\nabla\tau \cdot \nabla{A_0} + (\nabla^2\tau) A_0 &= 0 \tag{transport equation}
+	\end{align}
+	where the remaining transport equations ($\mathcal{O}(\omega^{1-j}), j = 1, 2, \dots$) are ignored, thus this method provides a second-order approximation, for high frequency (high $\omega$) scenarios.
+\end{enumerate}
+
+The eikonal equation is expressed in cylindrical coordinates and written in first-order form as
+\begin{align}
+	\dv{r}{s} &= c\ \xi(s), &
+	\dv{z}{s} &= c\ \zeta(s), \\
+	\dv{\xi}{s} &= \frac{-1}{c^2} \pdv{c}{r}, &
+	\dv{\zeta}{s} &= \frac{-1}{c^2} \pdv{c}{z},
+\end{align}
+along with initial conditions
+\begin{align}
+	r(0) &= 0 &
+	z(0) &= z_0 \\
+	\xi(0) &= \frac{\cos(\theta_0)}{c(0)} &
+	\zeta(0) &= \frac{\sin(\theta_0)}{c(0)}
+\end{align}
+
+The phase delay equation is
+\begin{align}
+	\dv{\tau}{s} &= \frac{1}{c}
+\end{align}
+with initial condition
+\begin{align}
+	\tau(0) &= 0
+\end{align}
+
+The dynamic ray equations are coupled as
+\begin{align}
+	\dv{p}{s} &= \frac{-c_{nn}}{c^2}\ q(s) &
+	\dv{q}{s} &= c\ p(s)
+\end{align}
+where $c_{nn}$ is the curvature of the sound speed in a direction normal to the ray path, given by
+\begin{align}
+	c_{nn} &= c^2 \Par{\pdv[2]{c}{r} \zeta^2 - 2 \pdv[2]{c}{r}{z}\ \xi \zeta + \pdv[2]{c}{z} \xi^2}
+\end{align}
+along with initial conditions
+\begin{align}
+	p(0) &= 1 & q(0) &= i\pi f W_0^2
+\end{align}
+where $W_0$ is the initial width of the beam, with value
+\begin{align}
+	W_0 &\in \Brack{10, 50} \lambda
+\end{align}
+
+Thus the required inputs from the user are the initial conditions
+\begin{itemize}
+	\item $z_0$
+	\item $\theta_0$
+	\item $f$
+	\item $c(r, z)$
+\end{itemize}

@@ -1,0 +1,2 @@
+# Test Images
+Many aspects of long range ocean acoustics modelling cannot be evaulated by reduction to a Boolean test. Many features need to be inspected visually. The images produced for inspection are saved in this directory.
