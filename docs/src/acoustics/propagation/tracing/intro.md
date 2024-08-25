@@ -1,0 +1,5 @@
+# Acoustic Tracing
+
+```@docs
+TraceConfig
+```

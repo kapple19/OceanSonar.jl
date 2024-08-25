@@ -1,0 +1,5 @@
+# Beam Tracing
+
+```@docs
+Beam
+```
