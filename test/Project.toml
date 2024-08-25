@@ -1,0 +1,9 @@
+[deps]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
+OceanSonar = "67f797bc-196d-4005-aba8-1f9215832286"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
+Supposition = "5a0628fe-1738-4658-9b6d-0b7605a9755b"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

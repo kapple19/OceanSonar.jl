@@ -1,0 +1,24 @@
+name = "OceanSonar"
+uuid = "67f797bc-196d-4005-aba8-1f9215832286"
+authors = ["Aaron Kaw <aaronjkaw@gmail.com> and contributors"]
+version = "1.0.0-DEV"
+
+[deps]
+ExprTools = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+NaNMath = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+
+[compat]
+ExprTools = "0.1.10"
+InteractiveUtils = "1.11.0"
+Makie = "0.21.4"
+NaNMath = "1.0.2"
+Symbolics = "5.33.0"
+julia = "1.11"
+
+[weakdeps]
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
+[extensions]
+MakieExt = "Makie"
