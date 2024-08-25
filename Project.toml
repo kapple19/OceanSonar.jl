@@ -1,0 +1,28 @@
+name = "OceanSonar"
+uuid = "811f79c1-33c5-4eb7-864a-255460254d19"
+authors = ["Aaron Kaw <aaronjkaw@gmail.com> and contributors"]
+version = "1.0.0-DEV"
+
+[deps]
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+NaNMath = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[weakdeps]
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+
+[extensions]
+OceanSonarMakieExt = "Makie"
+
+[compat]
+ForwardDiff = "0.10"
+IntervalArithmetic = "0.22"
+LinearAlgebra = "1"
+Makie = "0.20"
+NaNMath = "1.0"
+OrdinaryDiffEq = "6.70"
+Statistics = "1.10"
+julia = "1.10"
