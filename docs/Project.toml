@@ -1,0 +1,4 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+OceanSonar = "a7d3fdb7-e3e4-4197-b434-b0e9fe8574b3"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"

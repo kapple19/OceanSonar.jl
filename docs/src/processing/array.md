@@ -1,0 +1,5 @@
+# Array Design
+
+```@docs
+Entity
+```
