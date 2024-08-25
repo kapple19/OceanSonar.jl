@@ -1,0 +1,6 @@
+# Bathymetry
+
+```@docs
+bathymetry
+Bathymetry
+```

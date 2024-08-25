@@ -1,0 +1,6 @@
+# Altimetry
+
+```@docs
+altimetry
+Altimetry
+```
