@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bottom · OceanSonar.jl</title><meta name="title" content="Bottom · OceanSonar.jl"/><meta property="og:title" content="Bottom · OceanSonar.jl"/><meta property="twitter:title" content="Bottom · OceanSonar.jl"/><meta name="description" content="Documentation for OceanSonar.jl."/><meta property="og:description" content="Documentation for OceanSonar.jl."/><meta property="twitter:description" content="Documentation for OceanSonar.jl."/><meta property="og:url" content="https://kapple19.github.io/OceanSonar.jl/acoustics/reflection/bottom/"/><meta property="twitter:url" content="https://kapple19.github.io/OceanSonar.jl/acoustics/reflection/bottom/"/><link rel="canonical" href="https://kapple19.github.io/OceanSonar.jl/acoustics/reflection/bottom/"/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">OceanSonar.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Ocean Sonar</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox"/><label class="tocitem" for="menuitem-2"><span class="docs-label">General</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../general/usage/">Usage</a></li><li><a class="tocitem" href="../../../general/implementation/">Implementation</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">Oceanography</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-3-1" type="checkbox"/><label class="tocitem" for="menuitem-3-1"><span class="docs-label">Parameters</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><input class="collapse-toggle" id="menuitem-3-1-1" type="checkbox"/><label class="tocitem" for="menuitem-3-1-1"><span class="docs-label">Celerity</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/parameters/celerity/atmosphere/">Atmosphere</a></li><li><a class="tocitem" href="../../../oceanography/parameters/celerity/ocean/">Ocean</a></li><li><input class="collapse-toggle" id="menuitem-3-1-1-3" type="checkbox"/><label class="tocitem" for="menuitem-3-1-1-3"><span class="docs-label">Seabed</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/parameters/celerity/seabed/compressional/">Compressional</a></li><li><a class="tocitem" href="../../../oceanography/parameters/celerity/seabed/shear/">Shear</a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-1-2" type="checkbox"/><label class="tocitem" for="menuitem-3-1-2"><span class="docs-label">Density</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/parameters/density/atmosphere/">Atmosphere</a></li><li><a class="tocitem" href="../../../oceanography/parameters/density/ocean/">Ocean</a></li><li><a class="tocitem" href="../../../oceanography/parameters/density/seabed/">Seabed</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-1-3" type="checkbox"/><label class="tocitem" for="menuitem-3-1-3"><span class="docs-label">Attenuation</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/parameters/attenuation/atmosphere/">Atmosphere</a></li><li><a class="tocitem" href="../../../oceanography/parameters/attenuation/ocean/">Ocean</a></li><li><input class="collapse-toggle" id="menuitem-3-1-3-3" type="checkbox"/><label class="tocitem" for="menuitem-3-1-3-3"><span class="docs-label">Seabed</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/parameters/attenuation/seabed/compressional/">Compressional</a></li><li><a class="tocitem" href="../../../oceanography/parameters/attenuation/seabed/shear/">Shear</a></li></ul></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-2" type="checkbox"/><label class="tocitem" for="menuitem-3-2"><span class="docs-label">Slice</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/environment/intro/">Introduction</a></li><li><input class="collapse-toggle" id="menuitem-3-2-2" type="checkbox"/><label class="tocitem" for="menuitem-3-2-2"><span class="docs-label">Boundary</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/environment/boundary/altimetry/">Altimetry</a></li><li><a class="tocitem" href="../../../oceanography/environment/boundary/bathymetry/">Bathymetry</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3-2-3" type="checkbox"/><label class="tocitem" for="menuitem-3-2-3"><span class="docs-label">Medium</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../../oceanography/environment/medium/intro/">Introduction</a></li><li><a class="tocitem" href="../../../oceanography/environment/medium/atmosphere/">Atmosphere</a></li><li><a class="tocitem" href="../../../oceanography/environment/medium/ocean/">Ocean</a></li><li><a class="tocitem" href="../../../oceanography/environment/medium/seabed/">Seabed</a></li></ul></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-4" type="checkbox" checked/><label class="tocitem" for="menuitem-4"><span class="docs-label">Acoustics</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../scenario/">Scenario</a></li><li><input class="collapse-toggle" id="menuitem-4-2" type="checkbox" checked/><label class="tocitem" for="menuitem-4-2"><span class="docs-label">Reflection</span><i class="docs-chevron"></i></label><ul class="collapsed"><li class="is-active"><a class="tocitem" href>Bottom</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-4-3" type="checkbox"/><label class="tocitem" for="menuitem-4-3"><span class="docs-label">Propagation</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../propagation/intro/">Introduction</a></li><li><input class="collapse-toggle" id="menuitem-4-3-2" type="checkbox"/><label class="tocitem" for="menuitem-4-3-2"><span class="docs-label">Tracing</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../propagation/tracing/intro/">Introduction</a></li><li><a class="tocitem" href="../../propagation/tracing/rays/">Rays</a></li><li><a class="tocitem" href="../../propagation/tracing/beam/">Beams</a></li><li><a class="tocitem" href="../../propagation/tracing/grid/">Grid</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-4-3-3" type="checkbox"/><label class="tocitem" for="menuitem-4-3-3"><span class="docs-label">Parabolic</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../propagation/parabolic/marcher/">Marchers</a></li></ul></li></ul></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Acoustics</a></li><li><a class="is-disabled">Reflection</a></li><li class="is-active"><a href>Bottom</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bottom</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/kapple19/OceanSonar.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/kapple19/OceanSonar.jl/blob/f1fdf2cd6d5c32524706438701ee03ff9f3914b2/docs/src/acoustics/reflection/bottom.md" title="View source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Bottom-Reflection"><a class="docs-heading-anchor" href="#Bottom-Reflection">Bottom Reflection</a><a id="Bottom-Reflection-1"></a><a class="docs-heading-anchor-permalink" href="#Bottom-Reflection" title="Permalink"></a></h1><pre><code class="language-julia hljs">using OceanSonar
+using CairoMakie
+
+@kwdef struct Case
+    family::Symbol
+    axis::Axis
+    θ₁ = range(0, π/2, 301)
+    ρ₁ = [1e3]
+    c₁ = [1500.0]
+    α₁ = [0.0]
+    c₂ₚ = [1600.0]
+    c₂ₛ = [0.0]
+    α₂ₚ = [0.5]
+    α₂ₛ = [0.0]
+    ρ₂ = [2e3]
+end
+
+fig = Figure()
+
+cases = [
+    Case(
+        family = :c₂ₚ,
+        axis = Axis(fig[1, 1], title = &quot;Celerity&quot;),
+        c₂ₚ = Float64[1550 1600 1800],
+    )
+    Case(
+        family = :α₂ₚ,
+        axis = Axis(fig[1, 2], title = &quot;Attenuation&quot;),
+        α₂ₚ = Float64[0 0.5 1],
+    )
+    Case(
+        family = :ρ₂,
+        axis = Axis(fig[2, 1], title = &quot;Density&quot;),
+        ρ₂ = Float64[1500 2000 2500],
+    )
+    Case(
+        family = :c₂ₛ,
+        axis = Axis(fig[2, 2], title = &quot;Shear Celerity&quot;),
+        c₂ₛ = Float64[0 200 400 600],
+        α₂ₚ = [0.0]
+    )
+]
+
+translate_inputs = (
+    ρ_inc = :ρ₁,
+    ρ_rfr = :ρ₂,
+    c_inc = :c₁,
+    c_compr_rfr = :c₂ₚ,
+    c_shear_rfr = :c₂ₛ,
+    α_inc = :α₁,
+    α_compr_rfr = :α₂ₚ,
+    α_shear_rfr = :α₂ₛ,
+    θ_inc = :θ₁
+)
+
+model = :rayleigh_solid
+
+for case in cases
+    inputs = Tuple(
+        getproperty(case, translate_inputs[input])
+        for input in list_inputs(reflection_coefficient, model)
+    )
+    R = @. reflection_coefficient(model, inputs...)
+    BRLs = @. -20log10(R |&gt; abs)
+
+    for (n, BRL) in BRLs |&gt; eachcol |&gt; enumerate
+        lines!(case.axis, case.θ₁ .|&gt; rad2deg, BRL,
+            label = getproperty(case, case.family)[n] |&gt; string
+        )
+    end
+
+    ylims!(case.axis, 0, 15)
+    xlims!(case.axis, 0, 90)
+    axislegend(case.axis)
+end
+
+save(&quot;jensen_fig_1_23.svg&quot;, fig)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../scenario/">« Scenario</a><a class="docs-footer-nextpage" href="../../propagation/intro/">Introduction »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.6.0 on <span class="colophon-date" title="Sunday 25 August 2024 02:29">Sunday 25 August 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
