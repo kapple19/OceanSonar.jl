@@ -1,0 +1,9 @@
+doc/*.aux
+doc/*.blg
+doc/*.fdb_latexmk
+doc/*.fls
+doc/*.log
+doc/*.toc
+doc/*.synctex.gz
+doc/*_old
+doc/*Copy.pdf

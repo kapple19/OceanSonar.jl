@@ -1,0 +1,159 @@
+\documentclass{tufte-book}
+\title{Acoustic Propagation Modelling}
+\author{Aaron Kaw}
+
+\input{C:/Users/aaron/OneDrive/Science/Programming/LaTeX/AaronLibrary.tex}
+
+\newcommand{\bty}{\text{bty}}
+\newcommand{\ati}{\text{ati}}
+\newcommand{\bnd}{\text{bnd}}
+\newcommand{\inc}{\text{inc}}
+\newcommand{\rfl}{\text{rfl}}
+\renewcommand{\max}{\text{max}}
+\renewcommand{\min}{\text{min}}
+\newcommand{\ray}{\text{ray}}
+\newcommand{\spn}{\text{spn}}
+\newcommand{\nse}{\text{nse}}
+\newcommand{\erf}{\text{erf}}
+\newcommand{\dtc}{\text{dtc}}
+\newcommand{\fal}{\text{fal}}
+\newcommand{\erfc}{\text{erfc}}
+
+\newcommand{\DT}{\text{DT}}
+\newcommand{\NL}{\text{NL}}
+\newcommand{\SL}{\text{SL}}
+\newcommand{\TL}{\text{TL}}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\part{Helmholtz Equation}
+Taken from Computational Ocean Acoustics\cite{jensen2011computational}.
+
+\A{
+	O(\omega^2): && \Abs{\nabla\tau}^2 &= \frac{1}{c^2(\vec{x})} \\
+	O(\omega^1): && 2\nabla\tau \cdot \nabla A_0 + \Par{\nabla^2\tau}A_0 &= 0 \\
+	O(\omega^{1 - j}): && 2\nabla\tau \cdot \nabla A_j + \Par{\nabla^2\tau}A_j &= -\nabla^2 A_{j-1}
+}
+
+\chapter{Eikonal Equation}
+The eikonal equation
+\A{
+	\Abs{\nabla\tau}^2 &= \frac{1}{c^2(\vec{x})}
+}
+is a first-order nonlinear PDE for modelling the path taken by a ray.
+
+\section{First-Order System}
+In cylindrical coordinates,
+\A{
+	\Dif{r}{s} &= c\xi(s) & \Dif{\xi}{s} &= \frac{-1}{c(r, z)^2} \Part{c}{r} \\
+	\Dif{z}{s} &= c\zeta(s) & \Dif{\zeta}{s} &= \frac{-1}{c(r, z)^2} \Part{c}{z} \\
+	\Dif{\tau}{s} &= \frac{1}{c(r, z)}
+}
+with initial conditions
+\A{
+	r &= r_0 & \xi &= \frac{\cos(\theta_0)}{c(r_0, z_0)} \\
+	z &= z_0 & \zeta &= \frac{\sin(\theta_0)}{c(r_0, z_0)} \\
+	\tau &= 0
+}
+and boundary conditions defined as reflection off the bathymetry $z_\bty(r)$ and altimetry $z_\ati(r)$.
+\A{
+	\theta_i &= c(r, z) \cos^{-1}\Par{\xi_i} \\
+	&= c(r, z) \sin^{-1}\Par{\zeta_i} \\
+	\theta_r &= 2\theta_\bnd - \theta_i \\
+	\xi_r &= \frac{\cos(\theta_r)}{c(r, z)} \\
+	\zeta_r &= \frac{\sin(\theta_r)}{c(r, z)}
+}
+
+\chapter{Boundary Reflection}
+\A{
+	\vec{t}_\rfl &= \vec{t}_\inc - 2\Par{\vec{t}_\inc \cdot \vec{n}_\bnd} \vec{n}_\bnd
+}
+
+\chapter{Sonar Equations}
+\section{Detection Threshold}
+\subsection{Detection Index}
+The detection index is expressed as
+\A{
+	d &= \Par{\frac{\mu_\spn - \mu_\nse}{\sigma_\nse}}^2
+}
+For a Gaussian noise and signal-plus-noise with a non-fluctuating signal, note that $\sigma_\nse = \sigma_\spn$ so
+\A{
+	f_\nse(x) &= \frac{1}{\sqrt{2\pi\sigma_\nse^2}}\exp\Brace{\frac{-1}{2}\Par{\frac{x - \mu_\nse}{\sigma_\nse}}^2} \\
+	f_\spn(x) &= \frac{1}{\sqrt{2\pi\sigma_\nse^2}}\exp\Brace{\frac{-1}{2}\Par{\frac{x - \mu_\spn}{\sigma_\nse}}^2}
+}
+Their respective cumulative density functions are
+\A{
+	F_\nse(x) &= \frac{1}{2}\Brack{1 + \erf\Par{\frac{x - \mu_\nse}{\sqrt{2}\sigma_\nse}}} \\
+	F_\spn(x) &= \frac{1}{2}\Brack{1 + \erf\Par{\frac{x - \mu_\spn}{\sqrt{2}\sigma_\nse}}}
+}
+The probability of detection and probability of false alarm are defined via the point at which the two density values meet, integrated above as
+\A{
+	p_\dtc &= 1 - \frac{1}{2}\Brack{1 + \erf\Par{\frac{x - \mu_\spn}{\sqrt{2}\sigma_\nse}}}, &
+	p_\fal &= 1 - \frac{1}{2}\Brack{1 + \erf\Par{\frac{x - \mu_\nse}{\sqrt{2}\sigma_\nse}}} \\
+	\Rightarrow p_\dtc &= \frac{1}{2}\erfc\Par{\frac{x - \mu_\spn}{\sqrt{2}\sigma_\nse}}, & p_\fal &= \frac{1}{2}\erfc\Par{\frac{x - \mu_\nse}{\sqrt{2}\sigma_\nse}} \\
+	\Rightarrow x &= \mu_\spn + \sqrt{2}\sigma_\nse\erfc^{-1}\Par{2p_\dtc}, &
+	x &= \mu_\nse + \sqrt{2}\sigma_\nse\erf^{-1}\Par{2p_\fal}
+}
+So equating these expressions yields
+\A{
+	\mu_\spn + \sqrt{2}\sigma_\nse\erfc^{-1}\Par{2p_\dtc} &= \mu_\nse + \sqrt{2}\sigma_\nse\erfc^{-1}\Par{2p_\fal} \\
+	\Rightarrow \Par{\frac{\mu_\spn - \mu_\nse}{\sigma_\nse}}^2 &= 2\Brack{\erfc^{-1}\Par{2p_\fal} - \erfc^{-1}\Par{2p_\dtc}}^2
+}
+where the left hand side is the definition of the detection index. Thus,
+\A{
+	d &= 2\Brack{\erfc^{-1}\Par{2p_\fal} - \erfc^{-1}\Par{2p_\dtc}}^2
+}
+Rearranged,
+\A{
+	p_\dtc &= \frac{1}{2}\erfc\Par{\erfc^{-1}\Par{2p_\fal} - \sqrt{\frac{d}{2}}}
+}
+
+\bibliographystyle{apalike}
+\bibliography{Prop}
+
+\part{Appendix}
+\chapter{Concocting Equations}
+\section{Celerity}
+\A{
+	c_\max &= 1600 \\
+	c_\min &= 1500 \\
+	c(r, z) &= c_0 + c_1 z + c_2 z^2 \\
+	c_0 + c_1 z_\ati + c_2 z_\ati^2 &= c(r, z_\ati) = c_\max \\
+	c_0 + c_1 \frac{z_\ati + z_\bty}{2} + c_2 \Par{\frac{z_\ati + z_\bty}{2}}^2 &= c(r, \frac{z_\ati + z_\bty}{2}) = c_\min \\
+	c_0 + c_1 z_\bty + c_2 z_\bty^2 &= c(r, z_\bty) = c_\max \\
+	\Matrix{ccc}{
+		1 & z_\ati & z_\ati^2 \\
+		1 & \frac{z_\ati + z_\bty}{2} & \Par{\frac{z_\ati + z_\bty}{2}}^2 \\
+		1 & z_\bty & z_\bty^2
+	} \Matrix{c}{
+		c_0 \\ c_1 \\ c_2
+	} &= \Matrix{c}{
+		c_\max \\ c_\min \\ c_\max
+	}
+}
+
+\section{Bathymmetry}
+\A{
+	z_\min &= 700 \\
+	z_\max &= 1000 \\
+	r_0 &= 300 \\
+	z_\bty(r) &= z_\max - \Par{z_\max - z_\min}\exp\Par{-\frac{\Par{r - r_0}^2}{A_r}} \\
+	z_\bty\Par{\frac{r_0}{3}} &= z_\min + \frac{z_\min + z_\max}{10} = z_\max - \Par{z_\max - z_\min}\exp\Par{-\frac{\Par{r - r_0}^2}{A_r}} \\
+	z_\min + \frac{z_\min + z_\max}{10} &= z_\max - \Par{z_\max - z_\min}\exp\Par{-\frac{\Par{r - r_0}^2}{A_r}} \\
+	\Par{z_\max - z_\min}\exp\Par{-\frac{\Par{r - r_0}^2}{A_r}} &= z_\max - z_\min - \frac{z_\min + z_\max}{10} \\
+	\exp\Par{-\frac{\Par{r - r_0}^2}{A_r}} &= \frac{\dfrac{9}{10}z_\max - \dfrac{11}{10}z_\min}{z_\max - z_\min} \\
+	-\frac{\Par{r - r_0}^2}{A_r} &= \ln\Par{\dfrac{9z_\max- 11z_\min}{10\Par{z_\max - z_\min}}} \\
+	A_r &= \frac{4r_0^2/9}{\ln\Par{\dfrac{9z_\max- 11z_\min}{10\Par{z_\max - z_\min}}}}
+}
+
+\chapter{Sonar Equation Manipulation}
+\section{Calculating Probability of Detection}
+\A{
+	d &= Bt\Par{\frac{\SL - \TL}{B\NL}}^2 \\
+	p_\dtc &= \frac{1}{2}\erfc\Par{\sqrt{\frac{d}{2}} + \erfc^{-1}\Par{2p_\fal}}
+}
+
+\end{document}
