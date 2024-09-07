@@ -1,0 +1,27 @@
+abraham:
+    type: book
+    title: "Underwater Acoustic Signal Processing: Modeling, Detection, and Estimation"
+    author: Abraham, Douglas A.
+    publisher: Springer
+    date: 2019
+
+ainslie:
+    type: book
+    title: Principles of Sonar Performance Modeling
+    author: Ainslie, Michael A.
+    date: 2010
+    publisher: Springer
+
+jensen-et-al:
+    type: book
+    title: Computational Ocean Acoustics
+    author: ["Jensen, Finn B.", "Kuperman, William A.", "Porter, Michael B.", "Schmidt, Henrik"]
+    date: 2011
+    publisher: Springer
+
+lurton:
+    type: book
+    title: "An Introduction to Underwater Acoustics: Principles and Applications"
+    author: "Lurton, Xavier"
+    date: 2016
+    publisher: Springer
