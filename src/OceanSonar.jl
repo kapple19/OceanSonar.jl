@@ -30,7 +30,7 @@ function include_subroots(current_path::AbstractString)
         elseif isfile(subpath)
             endswith(subpath, "_.jl") && continue
             subpath == current_path && continue
-            # @info "Including: $subpath"
+            @debug "Including: $subpath"
             subpath
         else
             error("What is ", subpath, "?")

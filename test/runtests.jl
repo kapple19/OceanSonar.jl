@@ -11,4 +11,10 @@ using Base: Fix1
         @safetestset "Linting" include("00_code_quality/linting.jl")
         @safetestset "Docstrings" include("00_code_quality/docstrings.jl")
     end
+
+    name = "Preamble"
+    @time @testset "$name" begin
+        @info "Testing $name"
+        @safetestset "Text Styles" include("00_preamble/textstyles.jl")
+    end
 end
