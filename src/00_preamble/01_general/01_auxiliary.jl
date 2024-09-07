@@ -1,3 +1,4 @@
+export uniquesort
 export uniquesort!
 public isalphanumeric
 
@@ -7,6 +8,8 @@ public isalphanumeric
 Composition `sort!` then `unique!`.
 """
 const uniquesort! = unique! ∘ sort!
+
+const uniquesort = unique! ∘ sort
 
 """
 `OceanSonar.isalphanumeric(char::AbstractChar)` -> `Bool`

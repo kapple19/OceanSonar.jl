@@ -1,16 +1,20 @@
 module OceanSonar
 
-using NaNMath:
-    NaNMath
+using DataInterpolations:
+    AbstractInterpolation,
+    CubicSpline,
+    LinearInterpolation
 
-using Symbolics:
-    Symbolics,
-    Num
+using ForwardDiff: ForwardDiff
 
-using IntervalArithmetic:
-    IntervalArithmetic,
+using IntervalArithmetic: IntervalArithmetic,
     Interval,
     interval
+
+using NaNMath: NaNMath
+
+using Symbolics: Symbolics,
+    Num
 
 function include_subroots(current_path::AbstractString)
     current_directory = if isfile(current_path)

@@ -16,5 +16,6 @@ using Base: Fix1
     @time @testset "$name" begin
         @info "Testing $name"
         @safetestset "NaNMath" include("00_preamble/nanmath.jl")
+        @safetestset "Interpolation" include("00_preamble/interpolation.jl")
     end
 end
