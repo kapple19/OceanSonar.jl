@@ -178,6 +178,12 @@ struct Ray
 	end
 end
 
+# ╔═╡ 979f10c7-1d44-4a8d-8f27-687f810b6e88
+function simple_multipath()
+	z_ray = @. rem(z_ray_img, 2z_bot) |> abs
+	r_ray = @. ray_image_range(z_ray_img, z_rcv_img)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1696,5 +1702,6 @@ version = "3.6.0+0"
 # ╠═5c5ada3f-805b-48cb-93ef-a9de699de65d
 # ╠═61a49b37-3a52-43b4-9f5a-0f63328e788c
 # ╠═469a8875-1c17-4cf2-a0ce-137a02d8e108
+# ╠═979f10c7-1d44-4a8d-8f27-687f810b6e88
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
