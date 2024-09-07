@@ -7,6 +7,17 @@ Package of ocean sonar numerical models.
 """
 module OceanSonar
 
+export interval
+export Num
+
+using IntervalArithmetic: IntervalArithmetic,
+    interval
+
+using NaNMath: NaNMath
+
+using Symbolics: Symbolics,
+    Num
+
 """
 `include_subroots`
 

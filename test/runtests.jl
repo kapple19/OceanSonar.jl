@@ -16,5 +16,6 @@ using Base: Fix1
     @time @testset "$name" begin
         @info "Testing $name"
         @safetestset "Text Styles" include("00_preamble/textstyles.jl")
+        @safetestset "Math Functions" include("00_preamble/mathfunctions.jl")
     end
 end
