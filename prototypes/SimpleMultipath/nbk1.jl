@@ -28,6 +28,7 @@ r_rcv = 5e3
 # ╔═╡ 2e8e885b-3e3e-4f81-9954-a262922698c7
 n_rcv_imgs = -5:5
 # n_rcv_imgs = [0]
+# n_rcv_imgs = [-5]
 
 # ╔═╡ 282fe5df-2be3-42bf-bed9-dabc31ebc42e
 z_bot_imgs = @. z_bot * n_rcv_imgs
@@ -156,10 +157,16 @@ let
 	z_ray_img = z_bot_imgs
 	for z_rcv_img in z_rcv_imgs
 		r_ray = @. ray_image_range(z_ray_img, z_rcv_img)
-		lines!(axis, r_ray, @. rem(z_ray_img, 2z_bot) |> abs)
+		z_ray = @. rem(z_ray_img, 2z_bot) |> abs
+
+		@show r_ray
+		@show z_ray
+		println()
+		
+		lines!(axis, r_ray, z_ray)
 	end
 
-	xlims!(axis, 0, r_rcv)
+	# xlims!(axis, 0, r_rcv)
 
 	fig
 end
@@ -180,8 +187,8 @@ end
 
 # ╔═╡ 979f10c7-1d44-4a8d-8f27-687f810b6e88
 function simple_multipath()
-	z_ray = @. rem(z_ray_img, 2z_bot) |> abs
 	r_ray = @. ray_image_range(z_ray_img, z_rcv_img)
+	z_ray = @. rem(z_ray_img, 2z_bot) |> abs
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
