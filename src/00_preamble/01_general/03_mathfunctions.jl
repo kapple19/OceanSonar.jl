@@ -4,7 +4,9 @@ OceanSonar.MathFunctions
 ```
 
 A `module` of functions that inherit behaviours from
-`NaNMath`, `Symbolics`, and `IntervalArithmetic`.
+[`NaNMath`](https://github.com/JuliaMath/NaNMath.jl),
+[`Symbolics`](https://github.com/JuliaSymbolics/Symbolics.jl),
+and [`IntervalArithmetic`](https://github.com/JuliaIntervals/IntervalArithmetic.jl).
 
 Run `names(OceanSonar.MathFunctions)` to access the list of functions.
 
@@ -104,21 +106,29 @@ using ..NaNMath: NaNMath
 using ..OceanSonar: styletext
 using ..Symbolics: Num, Term, wrap
 
-macro initialise_math_function(function_name)
+for function_name in (:acos, :acosh, :asin, :atanh, :cos, :log, :log10, :log1p, :log2, :sin, :sqrt, :tan)
     function_type_name = Symbol(styletext(:Pascal, function_name |> String) * "FunctionType")
     @eval begin
         struct $function_type_name <: Function end
         const $function_name = $function_type_name()
+        $function_name(x::Number) = NaNMath.$function_name(x)
+        $function_name(x::Num) = Term(Base.$function_name, [x]) |> wrap
+        $function_name(x::Interval) = Base.$function_name(x)
     end
 end
 
-@initialise_math_function sqrt
-
-sqrt(x::Real) = NaNMath.sqrt(x)
-sqrt(x::Num) = Term(Base.sqrt, [x]) |> wrap
-sqrt(x::Interval) = Base.sqrt(x)
-
+public acos
+public acosh
+public asin
+public atanh
+public cos
+public log
+public log10
+public log1p
+public log2
+public sin
 public sqrt
+public tan
 
 end # module MathFunctions
 
@@ -143,4 +153,15 @@ for name in names(MathFunctions)
 end
 
 public MathFunctions
+public acos
+public acosh
+public asin
+public atanh
+public cos
+public log
+public log10
+public log1p
+public log2
+public sin
 public sqrt
+public tan

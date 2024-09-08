@@ -6,7 +6,7 @@ using Supposition.Data:
     Satisfying,
     Vectors
 
-floats = Floats(; nans = true, infs = true)
+floats = Floats{Float64}(; nans = true, infs = true)
 intervals = Satisfying(
     Vectors(
         Floats(nans = false, infs = true);
