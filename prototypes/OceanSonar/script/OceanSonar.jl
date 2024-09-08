@@ -56,14 +56,14 @@ end
 function beam_ensemble(
     cel::Function,
     src_pos::@NamedTuple{x₀::AbscissaType, y₀::OrdinateType, z₀::DepthType},
-    angles::AbstractVector{<:@NamedTuple{θ₀::AzimuthType, φ₀::DeclinationType}}
+    angles::AbstractVector{<:AbstractVector{<:Real}}
 ) where {
     AbscissaType <: Real,
     OrdinateType <: Real,
-    DepthType <: Real,
-    AzimuthType <: Real,
-    DeclinationType <: Real
+    DepthType <: Real
 }
+    @assert angles .|> length |> unique! == [2]
+
     cel_grad(pos) = ForwardDiff.gradient(pos -> cel(pos...), pos)
 
     function trace!(du, u, _, _)
@@ -81,7 +81,7 @@ function beam_ensemble(
     tng_inits = [
         [
             cos(φ₀) .* [cos(θ₀), sin(θ₀)]...; sin(φ₀)
-        ] for (; θ₀, φ₀) in angles
+        ] for (θ₀, φ₀) in angles
     ] / cel(src_pos...)
 
     function launch_ray(prob, n, _)
@@ -106,7 +106,28 @@ function beam_ensemble(
     # return [beam_output(sol, nothing)]
 end
 
-angles = [(θ₀ = 0, φ₀ = φ₀) for φ₀ in π/20 * range(-1, 1, 21)]
+function equidistributed_spherical_angles(N)
+	a = 4π / N
+	d = sqrt(a)
+	Mφ = round(π/d)
+	dφ = π/Mφ
+	dθ = a/dφ
+
+	angles = [[0, -π/2]]
+	for m in 0 : Mφ-1
+		φ = π * (m + 0.5) / Mφ
+		Mθ = round(2π * sin(φ) / dθ)
+		for n in  0 : Mθ-1
+			θ = 2π * n/Mθ
+			push!(angles, [θ - π, φ - π/2])
+		end
+	end
+    push!(angles, [0, π/2])
+
+	return angles
+end
+
+angles = equidistributed_spherical_angles(301)
 src_pos = (x₀ = -100.0, y₀ = 25.0, z₀ = 1e3)
 beams = beam_ensemble(sound_speed_profile, src_pos, angles)
 

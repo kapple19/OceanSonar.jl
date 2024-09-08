@@ -133,6 +133,51 @@ z = @. cos(θs)
 # ╔═╡ 17fcd3fe-2a30-423c-8aea-841691957131
 scatter(x, y, z)
 
+# ╔═╡ 98108491-adb1-4f44-96a7-a2041d31b146
+function equidistributed_spherical_angles2(N)
+	a = 4π / N
+	d = sqrt(a)
+	Mφ = round(π/d)
+	dφ = π/Mφ
+	dθ = a/dφ
+
+	angles = [[0, -π/2]]
+	for m in 0 : Mφ-1
+		φ = π * (m + 0.5) / Mφ
+		Mθ = round(2π * sin(φ) / dθ)
+		for n in  0 : Mθ-1
+			θ = 2π * n/Mθ
+			push!(angles, [θ - π, φ - π/2])
+		end
+	end
+    push!(angles, [0, π/2])
+
+	return angles
+end
+
+# ╔═╡ d8d1ff2a-9650-4ac0-a88a-ef683a51eab9
+angs = equidistributed_spherical_angles2(301)
+
+# ╔═╡ 4aa561d7-3a31-4470-8ae4-bbafbced045f
+(p2, p3) = let
+	pts = [
+		Point3(
+			cos(θ) * cos(ϕ),
+			sin(θ) * cos(ϕ),
+			sin(ϕ)
+		) for (θ, ϕ) in angs
+	]
+
+	# scatter(pts)
+	scatter(angs .|> splat(Point2)), scatter(pts)
+end
+
+# ╔═╡ 6622add7-02a4-4e26-8661-bf037e4da0b8
+p2
+
+# ╔═╡ 7423a4e4-89de-47b6-ab21-2fdf53931ea7
+p3
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1596,5 +1641,10 @@ version = "3.6.0+0"
 # ╠═0c16ec40-4a34-4f3c-969a-27479937acfb
 # ╠═dde30033-23f0-4cea-b704-bed408b3e404
 # ╠═17fcd3fe-2a30-423c-8aea-841691957131
+# ╠═98108491-adb1-4f44-96a7-a2041d31b146
+# ╠═d8d1ff2a-9650-4ac0-a88a-ef683a51eab9
+# ╠═4aa561d7-3a31-4470-8ae4-bbafbced045f
+# ╠═6622add7-02a4-4e26-8661-bf037e4da0b8
+# ╠═7423a4e4-89de-47b6-ab21-2fdf53931ea7
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
