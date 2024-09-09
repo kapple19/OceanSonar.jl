@@ -1,8 +1,13 @@
+## Dependencies
 using DataInterpolations
 using ForwardDiff
 using OrdinaryDiffEqTsit5
 using GLMakie
 
+## Bathymetry
+# TODO.
+
+## Sound Speed Profile
 ranges = 1e3 * [0, 12.5, 25.0, 37.5, 50.0, 75.0, 100, 125.0, 201.0]
 depths = 1e3 * [0, 0.2, 0.7, 0.8, 1.2, 1.5, 2, 3, 4, 5]
 sound_speeds = [
@@ -45,6 +50,7 @@ end
 
 sound_speed_profile(x, y, z) = sound_speed_profile_(myhypot(x, y), z)
 
+## Beam Tracing
 struct Beam
     s_max::Float64
 
@@ -54,7 +60,7 @@ struct Beam
 end
 
 function beam_ensemble(
-    cel::Function,
+    c_ocn::Function,
     src_pos::@NamedTuple{x₀::AbscissaType, y₀::OrdinateType, z₀::DepthType},
     angles::AbstractVector{<:AbstractVector{<:Real}}
 ) where {
@@ -64,13 +70,13 @@ function beam_ensemble(
 }
     @assert angles .|> length |> unique! == [2]
 
-    cel_grad(pos) = ForwardDiff.gradient(pos -> cel(pos...), pos)
+    cel_grad(pos) = ForwardDiff.gradient(pos -> c_ocn(pos...), pos)
 
     function trace!(du, u, _, _)
         pos = @view u[1:3]
         tng = @view u[4:6]
 
-        c = cel(pos...)
+        c = c_ocn(pos...)
         ∇c = cel_grad(pos)
         du .= [
             c * tng ...
@@ -82,7 +88,7 @@ function beam_ensemble(
         [
             cos(φ₀) .* [cos(θ₀), sin(θ₀)]...; sin(φ₀)
         ] for (θ₀, φ₀) in angles
-    ] / cel(src_pos...)
+    ] / c_ocn(src_pos...)
 
     function launch_ray(prob, n, _)
         prob.u0[4:6] .= tng_inits[n]
@@ -131,6 +137,7 @@ angles = equidistributed_spherical_angles(301)
 src_pos = (x₀ = -100.0, y₀ = 25.0, z₀ = 1e3)
 beams = beam_ensemble(sound_speed_profile, src_pos, angles)
 
+## Interactive Visualisation
 fig = Figure()
 
 azimuth_view_slider = Slider(fig[1, 1],
