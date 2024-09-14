@@ -10,6 +10,10 @@ module OceanSonar
 export interval
 export Num
 
+import Core:
+    String,
+    Symbol
+
 using IntervalArithmetic: IntervalArithmetic,
     interval
 

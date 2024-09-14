@@ -137,23 +137,29 @@ function styletext(
         Val{:Pascal}
     }
 }
+    isempty(text) && return text
+
     tempsep = styletextseps.snake
 
     # Convert camel word separations to snake separations
     camel_regexes = [
+        "[A-Z][A-Z]"
         "[a-z][A-Z]"
         "[0-9][A-Z]"
         "[a-z][0-9]"
         "[A-Z][0-9]"
     ] .|> Regex
     for camel_regex = camel_regexes
-        text = replace(text,
-            [
-                text[idxs] => text[idxs[begin]] * tempsep * text[idxs[end]]
-                for idxs in findall(camel_regex, text, overlap = true)
-            ]...
-        )
+        regex_idxs_vec = findall(camel_regex, text, overlap = true)
+        isempty(regex_idxs_vec) && continue
+
+        text_idx_finals = push!([regex_idxs[begin] for regex_idxs in regex_idxs_vec], length(text))
+        text_idx_firsts = pushfirst!([regex_idxs[end] for regex_idxs in regex_idxs_vec], 1)
+        texts = [text[first:final] for (first, final) in zip(text_idx_firsts, text_idx_finals)]
+        text = join(texts, tempsep)
     end
+
+    isempty(text) && return text
 
     # Normalise existing separators
     normaliser_regex = r"(_| |-)(_| |-)"
@@ -163,9 +169,23 @@ function styletext(
     text = replace(text, "-" => tempsep)
     text = replace(text, " " => tempsep)
 
+    isempty(text) && return text
+
     # Remove non-alphanumeric symbols
     is_alphanumeric_or_tempsep(char::AbstractChar) = (isalphanumeric(char) || char == tempsep)
     text = filter(is_alphanumeric_or_tempsep, text)
+
+    isempty(text) && return text
+
+    # Remove leading and trailing separators
+    while !isempty(text) && text[begin] == tempsep
+        text = replace(text, Regex("^$tempsep") => "")
+    end
+    while !isempty(text) && text[end] == tempsep
+        text = replace(text, Regex("$tempsep\$") => "")
+    end
+
+    isempty(text) && return text
 
     # Tokenise
     tokens = split(text, tempsep)

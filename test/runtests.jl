@@ -15,7 +15,14 @@ using Base: Fix1
     name = "Preamble"
     @time @testset "$name" begin
         @info "Testing $name"
-        @safetestset "Text Styles" include("00_preamble/textstyles.jl")
-        @safetestset "Math Functions" include("00_preamble/mathfunctions.jl")
+
+        @testset "Auxiliary" begin
+            @safetestset "Text Styles" include("00_preamble/auxiliary/textstyles.jl")
+            @safetestset "Math Functions" include("00_preamble/auxiliary/mathfunctions.jl")
+        end
+
+        @testset "Modelling" begin
+            @safetestset "Naming" include("00_preamble/modelling/naming.jl")
+        end
     end
 end
