@@ -12,7 +12,7 @@ using Supposition
 
 # ╔═╡ 8621e71d-28f3-4fa4-9ba6-02da3bc0e060
 KEEPTOKENS = [
-    "a"; "to"; "the"
+    "a"; "to"; "the"; "with";
     "NSW";
     (["UL", "VL", "L", "M", "H", "VH", "UH"] .* "F");
     string.(1:3, "D")...
@@ -35,6 +35,8 @@ function styletext(
 	keeptokens::AbstractVector{<:AbstractString} = KEEPTOKENS,
 	pascal_regexes = PASCAL_REGEXES
 )
+	keeptokens = sort(keeptokens; by = length) |> reverse
+	
 	# Check
 	isempty(text) && return ""
 
@@ -42,7 +44,7 @@ function styletext(
 
 	# Normalise separators
 	function normalise_separators(txt)
-		nonalphanumeric = r"[^a-zA-Z\d\s:]"
+		nonalphanumeric = r"[^((a-z)|(A-Z)|(\d))]"
 		txt = replace(txt, nonalphanumeric => midsep)
 		txt = replace(txt, r"\s+" => midsep)
 		while !isempty(txt) && txt[begin] == midsep
@@ -107,18 +109,27 @@ function styletext(
 	replace(text, midsep => "") |> isempty && return ""
 
 	function applycap(token)
-		if token in keeptokens
-			if length(token) == 1 && sep == ""
-				uppercase(token)
+		keep_idxs = findall(lowercase(token) .== lowercase.(keeptokens))
+		return if !isempty(keep_idxs)
+			@assert length(keep_idxs) == 1
+			token = keeptokens[keep_idxs |> only]
+			if sep == ""
+				uppercase(token[1])
 			else
-				token
+				token[1]
+			end * if length(token) > 1
+				token[2:end]
+			else
+				""
 			end
+
 		elseif cap
 			uppercase(token[1]) * if length(token) > 1
 				lowercase(token[2:end])
 			else
 				""
 			end
+
 		else
 			lowercase(token)
 		end
@@ -142,99 +153,178 @@ begin
 	stylesetup(::Val{:kebab}) = (sep = "-", cap = false)
 	
 	stylesetup(::Val{:Pascal}) = (sep = "", cap = true)
-	stylesetup(::Val{:pascal}) = (sep = "", cap = true)
+	stylesetup(::Val{:pascal}) = stylesetup(Val(:Pascal))
 end;
 
 # ╔═╡ c8f44dac-6680-44ac-abd6-6a437b2f9307
-function styletext(style::Val{S}, text::AbstractString;
-	keeptokens = KEEPTOKENS,
-	pascal_regexes = PASCAL_REGEXES
-) where {S}
-	styletext(text;
-		stylesetup(style)...,
-		keeptokens = keeptokens,
-		pascal_regexes = pascal_regexes
-	)
+function styletext(style::Val{S}, text::AbstractString; kws...) where {S}
+	styletext(text; stylesetup(style)..., kws...)
 end;
 
 # ╔═╡ 8bb03021-6c86-4e2f-89bd-575d592fe81e
-function styletext(style::Symbol, posargs...; kwargs...)
-	styletext(style |> Val, posargs...; kwargs...)
+function styletext(style::Symbol, args...; kws...)
+	styletext(style |> Val, args...; kws...)
 end;
 
 # ╔═╡ 9f83e3ea-bc9d-4710-8189-d61c4111ba76
-function styletext(style::AbstractString, posargs...; kwargs...)
-	styletext(style |> Symbol, posargs...; kwargs...)
+function styletext(style::AbstractString, args...; kws...)
+	styletext(style |> Symbol, args...; kws...)
 end;
 
 # ╔═╡ 6e603a09-73a9-4e89-b6ca-47e5a80d2157
-function styletext(::Val{:camel}, text::AbstractString;
-	keeptokens = KEEPTOKENS,
-	pascal_regexes = PASCAL_REGEXES
-)
-	text = styletext(text;
-		stylesetup(Val(:Pascal))...,
-		keeptokens = keeptokens,
-		pascal_regexes = pascal_regexes
-	)
+function styletext(::Val{:camel}, text::AbstractString; kws...)
+	isempty(text) && return ""
+	text = styletext(text; stylesetup(Val(:Pascal))..., kws...)
+	isempty(text) && return text
+	return lowercase(text[1]) * if length(text) > 1
+		text[2:end]
+	else
+		""
+	end
 end;
 
-# ╔═╡ 3e44bbd5-cd71-4cf1-9ef5-50f9b1c00cc2
-styletext(:Space, @show styletext(:space, @show styletext(:Space, "A")))
+# ╔═╡ 40ab5607-8a36-4785-a3ae-8eeff1186c04
+styletext(:Pascal, "Say32BigGoodbyesTo1CruelNSW1stWorld")
+
+# ╔═╡ 7f2c8e6e-acc2-42e0-834f-6f740aa2fec5
+styletext(:Kebab, "Say32BigGoodbyesTo1CruelNSW1stWorld")
 
 # ╔═╡ 4a457e8b-1d4e-473a-96b6-642d9410d1ce
 begin
-	titlecase(text;
-		keeptokens = KEEPTOKENS,
-		pascal_regexes = PASCAL_REGEXES
-	) = styletext(:title, text; 
-		keeptokens = keeptokens,
-		pascal_regexes = pascal_regexes
-	)
-	
-	snakecase(text;
-		keeptokens = KEEPTOKENS,
-		pascal_regexes = PASCAL_REGEXES
-	) = styletext(:snake, text; 
-		keeptokens = keeptokens,
-		pascal_regexes = pascal_regexes
-	)
-	
-	pascalcase(text;
-		keeptokens = KEEPTOKENS,
-		pascal_regexes = PASCAL_REGEXES
-	) = styletext(:pascal, text; 
-		keeptokens = keeptokens,
-		pascal_regexes = pascal_regexes
-	)
+	titletext(text::AbstractString; kws...) = styletext(:title, text; kws...)
+	snaketext(text::AbstractString; kws...) = styletext(:snake, text; kws...)
+	pascaltext(text::AbstractString; kws...) = styletext(:pascal, text; kws...)
 end;
 
-# ╔═╡ 69376254-3941-46e9-9bc2-917dd14adef8
-let
-	validchars = [
+# ╔═╡ 4613a4ca-7f53-4c63-a9d5-d69f21294b1c
+@show snaketext(@show titletext(@show snaketext("Uhf")));
+
+# ╔═╡ 28cbdd9a-ca06-4aa1-9dd3-22f936195536
+@testset "Set 1" begin
+    texts = (
+        Space = "Say 32 Big Goodbyes to 1 Cruel NSW 1st World",
+        space = "say 32 big goodbyes to 1 cruel NSW 1st world",
+        Snake = "Say_32_Big_Goodbyes_to_1_Cruel_NSW_1st_World",
+        snake = "say_32_big_goodbyes_to_1_cruel_NSW_1st_world",
+        Kebab = "Say-32-Big-Goodbyes-to-1-Cruel-NSW-1st-World",
+        kebab = "say-32-big-goodbyes-to-1-cruel-NSW-1st-world",
+        pascal = "Say32BigGoodbyesTo1CruelNSW1stWorld",
+        camel = "say32BigGoodbyesTo1CruelNSW1stWorld",
+    )
+    @testset "From $old_style" for (old_style, old_text) in pairs(texts)
+        @testset "To $new_style" for (new_style, new_text) in pairs(texts)
+            con_text = styletext(new_style |> Symbol |> Val, old_text)
+            @test con_text == new_text
+        end
+    end
+end
+
+# ╔═╡ 92d80ebe-1422-4df8-a660-9c5f9313110a
+@testset "Set 2" begin
+texts = (
+    Space = "Say 32 Big Goodbyes to a Cruel NSW 1st World",
+    space = "say 32 big goodbyes to a cruel NSW 1st world",
+    Snake = "Say_32_Big_Goodbyes_to_a_Cruel_NSW_1st_World",
+    snake = "say_32_big_goodbyes_to_a_cruel_NSW_1st_world",
+    Kebab = "Say-32-Big-Goodbyes-to-a-Cruel-NSW-1st-World",
+    kebab = "say-32-big-goodbyes-to-a-cruel-NSW-1st-world",
+    pascal = "Say32BigGoodbyesToACruelNSW1stWorld",
+    camel = "say32BigGoodbyesToACruelNSW1stWorld",
+)
+    @testset "From $old_style" for (old_style, old_text) in pairs(texts)
+        @testset "To $new_style" for (new_style, new_text) in pairs(texts)
+            con_text = styletext(new_style |> Symbol |> Val, old_text)
+            @test con_text == new_text
+        end
+    end
+end
+
+# ╔═╡ cf4db81b-9fdf-437f-ab57-b5a6005b9bb4
+validchars = [
 	    'A':'Z'...
 	    'a':'z'...
 	    '0':'9'...
 	    [' ', '_', '-']...
+	];
+
+# ╔═╡ 3d30633d-c385-4005-9162-8ab136bbef4d
+validchargen = Data.SampledFrom(validchars)
+
+# ╔═╡ 0959d28b-d60b-41d1-b8f1-0d8a93e353ae
+validcharsgen = Data.Vectors(validchargen; min_size = 1, max_size = 20)
+
+# ╔═╡ 5f607cbf-935e-46aa-b945-2b4bd3f531ba
+let
+	styles = [
+		:Space, :space, :Snake, :snake, :Kebab, :kebab, :Pascal, :pascal, :camel
+	]
+
+	# Not sure what to call this
+	@testset "Style Specification Types" begin
+		@testset "$style" for style in styles
+			@check function equivalent(chars = validcharsgen)
+				text = chars |> String
+				[
+					styletext(style |> T, text)
+					for T in [String, Symbol, Val]
+				] |> allequal
+			end
+		end
+
+		@testset "Convenience Methods" begin
+			@check function title(chars = validcharsgen)
+				text = chars |> String
+				[
+					titletext(text)
+					styletext("Title", text)
+					styletext("title", text)
+					styletext(:Title, text)
+					styletext(:title, text)
+					styletext(:Title |> Val, text)
+					styletext(:title |> Val, text)
+				] |> allequal
+			end
+	
+			@check function snake(chars = validcharsgen)
+				text = chars |> String
+				[
+					snaketext(text)
+					styletext("snake", text)
+					styletext(:snake, text)
+					styletext(:snake |> Val, text)
+				] |> allequal
+			end
+	
+			@check function pascal(chars = validcharsgen)
+				text = chars |> String
+				[
+					pascaltext(text)
+					styletext("Pascal", text)
+					styletext("pascal", text)
+					styletext(:Pascal, text)
+					styletext(:pascal, text)
+					styletext(:Pascal |> Val, text)
+					styletext(:pascal |> Val, text)
+				] |> allequal
+			end
+		end
+	end
+end
+
+# ╔═╡ 69376254-3941-46e9-9bc2-917dd14adef8
+let
+	styles = [
+		:Space, :space, :Snake, :snake, :Kebab, :kebab, :Pascal, :pascal, :camel
 	]
 	
-	validchargen = Data.SampledFrom(validchars)
-	validcharsgen = Data.Vectors(validchargen; min_size = 1, max_size = 20)
-	
-	# casestyles = [:Space, :space, :Snake, :snake, :Kebab, :kebab, :Pascal, :pascal, :camel]
-	casestyles = [:Space, :space, :Snake, :snake, :Kebab, :kebab, :Pascal]
-	
-	@testset "Invertibility" begin
-	    @testset "From $ref_style" for ref_style in casestyles
-	        @testset "To $mid_style" for mid_style in casestyles
-	            @check function invariance(chars = validcharsgen)
-	                ref_text = styletext(ref_style, chars |> String)
-	                mid_text = styletext(mid_style, ref_text)
-	                con_text = styletext(ref_style, mid_text)
-	                con_text == ref_text
-	            end
-	        end
-	    end
+	@testset "From $ref_style" for ref_style in styles
+		@testset "To $mid_style" for mid_style in styles
+			@check function invertible(chars = validcharsgen)
+				ref_text = styletext(ref_style, chars |> String)
+				mid_text = styletext(mid_style, ref_text)
+				ref_text == styletext(ref_style, mid_text)
+			end
+		end
 	end
 end
 
@@ -452,13 +542,21 @@ version = "17.4.0+2"
 # ╠═8621e71d-28f3-4fa4-9ba6-02da3bc0e060
 # ╠═d286c1bb-4f89-4935-92b1-aafe506820df
 # ╠═439e5669-1610-4a6e-b645-0f7bd787120e
-# ╠═3e44bbd5-cd71-4cf1-9ef5-50f9b1c00cc2
+# ╠═4613a4ca-7f53-4c63-a9d5-d69f21294b1c
+# ╠═40ab5607-8a36-4785-a3ae-8eeff1186c04
+# ╠═7f2c8e6e-acc2-42e0-834f-6f740aa2fec5
 # ╠═59417e6f-4291-445f-af8b-9e4deac50bc7
 # ╠═c8f44dac-6680-44ac-abd6-6a437b2f9307
 # ╠═8bb03021-6c86-4e2f-89bd-575d592fe81e
 # ╠═9f83e3ea-bc9d-4710-8189-d61c4111ba76
 # ╠═6e603a09-73a9-4e89-b6ca-47e5a80d2157
 # ╠═4a457e8b-1d4e-473a-96b6-642d9410d1ce
+# ╠═5f607cbf-935e-46aa-b945-2b4bd3f531ba
+# ╠═28cbdd9a-ca06-4aa1-9dd3-22f936195536
+# ╠═92d80ebe-1422-4df8-a660-9c5f9313110a
+# ╠═cf4db81b-9fdf-437f-ab57-b5a6005b9bb4
+# ╠═3d30633d-c385-4005-9162-8ab136bbef4d
+# ╠═0959d28b-d60b-41d1-b8f1-0d8a93e353ae
 # ╠═69376254-3941-46e9-9bc2-917dd14adef8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
