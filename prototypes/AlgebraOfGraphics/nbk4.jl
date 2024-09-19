@@ -4,27 +4,16 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 4ac86560-7444-11ef-05cf-2d111ebdcf16
+# ╔═╡ 71d82b02-7678-11ef-131b-f59b2187bf33
 using CairoMakie
 
-# ╔═╡ b9ec506f-a42e-4b3b-8c90-81b5b115a8a2
+# ╔═╡ a45b75f1-0824-4beb-9ac1-28e4aa3930ad
 using AlgebraOfGraphics
 
-# ╔═╡ 25587224-449e-4bc7-a435-5da4bac6a0bd
-using StaticArrays
+# ╔═╡ bd6e966c-1691-42e6-835a-02d079a2dd7a
+axis = (yreversed = true,)
 
-# ╔═╡ d5fc70e6-d07a-4319-85b9-727ff1b829d2
-using Tables
-
-# ╔═╡ 5c88c4ae-9bae-4bd1-97fe-a4b419fc4ae1
-using DataFrames
-
-# ╔═╡ 619e0c29-3944-44f5-959c-bd6c174919e1
-md"""
-This was nice, prototyping how different features would work together. But it's now getting too complicated for the original scope of learning AlgebraOfGraphics.
-"""
-
-# ╔═╡ fcff0866-6b96-4e81-9166-6e78ef68922d
+# ╔═╡ 58554449-772d-4211-a76e-9992dd0ea21a
 function munk_profile(z::Real; ϵ::Real = 7.37e-3)
     z̃ = 2(z/1300 - 1)
     return 1500(
@@ -34,109 +23,86 @@ function munk_profile(z::Real; ϵ::Real = 7.37e-3)
     )
 end
 
-# ╔═╡ 7dc3a677-4a98-4ab4-8ec1-1b4ca4b5743f
-mutable struct Profile0D
-	z::Float64
-	c::Float64
-end
+# ╔═╡ b0d14e04-2e7c-430b-8f4b-39e483648505
+random_profile0D(z) = (z = z, c = munk_profile(z) + randn())
 
-# ╔═╡ 0f02c573-0fe1-4aa2-92b6-10219d928037
-Base.rand(::Type{Profile0D}, z::Real) = Profile0D(z, munk_profile(z) + randn())
+# ╔═╡ 6b55b2f0-c370-45b7-8226-6fad3e3ac04c
+random_profile0D(5e3rand(Float64))
 
-# ╔═╡ 62cb6f53-a075-48a0-befc-466dbcad7fed
-mutable struct Profile1D{N}
-	r::Float64
-	subprofiles::SVector{N, Profile0D}
-
-	function Profile1D(r::Real, zc::AbstractVector{Profile0D})
-		N = length(zc)
-		new{N}(r, SVector{N}(zc))
-	end
-
-	function Profile1D(r::Real, z::AbstractVector{<:Real}, c::AbstractVector{<:Real})
-		@assert issorted(z)
-		N = length(z)
-		@assert N == length(c)
-		zc = [Profile0D(z_, c_) for (z_, c_) in zip(z, c)]
-		return Profile1D(r, zc)
-	end
-end
-
-# ╔═╡ 57c7d8bc-c29e-457a-a163-e048f8d35d2b
-function Base.rand(::Type{Profile1D}, Nz::Integer, r::Real = 0.0)
-	z_max = 5e3 + 100randn()
+# ╔═╡ 6df7bd80-c8cd-4313-ba90-eaf714fa4524
+function random_profile1D(Nz::Integer, r::Real = 0.0)
+	z_max = 5e3 - 100rand(Float64)
 	z = range(0, z_max, Nz) .+ randn(Nz) * z_max / 10Nz
 	@assert issorted(z)
-	zc = @. rand(Profile0D, z)
-	return Profile1D(r, zc)
+	zc_vec = @. random_profile0D(z)
+	return (r = r, profiles0D = zc_vec)
 end
 
-# ╔═╡ 343f5136-f107-4a76-9e93-6ab20d42c928
-rand(Profile0D, 5e3rand(Float64))
+# ╔═╡ 143f5b77-a0f6-4386-8f21-2c0dea77a6e5
+random_profile1D(rand(9:31))
 
-# ╔═╡ 2df102f0-e686-4684-a567-95092f5ddd5a
-profile1D = Base.rand(Profile1D, 11)
-
-# ╔═╡ 0c8ac971-e412-472c-aeae-341cc643831a
-axis = (yreversed = true,)
-
-# ╔═╡ a9f5ec43-b563-41c3-bec2-2d51918ed658
+# ╔═╡ 198a943a-a06b-4ed9-89cf-b9c26fbbfed9
 profile1D_plotter = mapping(:c, :z) * visual(Lines)
 
-# ╔═╡ 27bcd532-802c-4304-924f-d312a0a39c88
-data(profile1D.subprofiles) * profile1D_plotter |> draw(
+# ╔═╡ 845c065b-55b5-40b1-b5b4-434a365ae2b3
+(random_profile1D(rand(9:31)).profiles0D |> data) * profile1D_plotter |> draw(
 	axis = axis
 )
 
-# ╔═╡ 05b22e03-693a-4d0c-a098-1379c30ca444
-mutable struct Profile2D{N}
-	θ::Float64
-	rzc::SVector{N, Profile1D{Nrzc}} where {Nrzc}
-end
-
-# ╔═╡ 15855485-68c7-4a2b-86fe-709091e7e26b
-function random_profile2D(Nr = rand(5:11))
+# ╔═╡ e5562347-b96d-4c09-8ade-bdf784054cee
+function random_profile2D(Nr::Integer, θ::Real = 0.0)
 	r_max = 10e3 + 10e3rand(Float64) |> abs
 	r_vec = range(0, r_max, Nr) |> collect
 	dr_vec = diff(r_vec)
 	r_vec[2:end] .= r_vec[2:end] + dr_vec/10 .* rand(Nr-1)
-	@assert issorted(r_vec)
-
-	return [
-		(
-			r = r,
-			profile = random_profile1D()
-		) for r in r_vec
-	]
+	rzc_vec = @. random_profile1D($rand(9:31), r_vec)
+	(θ = θ, profiles1D = rzc_vec)
 end
 
-# ╔═╡ 6ff7c0d8-4e0a-4358-8e3b-07ed7a7adae8
-profile2D = random_profile2D()
+# ╔═╡ 7dd65561-aa06-405e-a50e-a128b45f1c55
+prof2D = random_profile2D(rand(3:7))
 
-# ╔═╡ ee4fb9ae-5d56-4ff9-a207-76b14d63d383
-data(profile2D)
-
-# ╔═╡ 5b00f9c8-21d4-4da2-952d-d5d895de20e8
+# ╔═╡ f52aae8c-b5ac-4cd1-aa2f-ecbb43d1f73e
 sum(
-	data(prof1D.profile)
-	for prof1D in profile2D
+	data(prof1D.profiles0D)
+	for prof1D in prof2D.profiles1D
 ) * profile1D_plotter |> draw(axis = axis)
+
+# ╔═╡ a8a25eb8-6ec9-4cb7-bdaa-e45e5553776a
+pregrouped(
+	[prof1D.profiles0D for prof1D in prof2D.profiles1D],
+	color = [prof1D.r for prof1D in prof2D.profiles1D]
+) * visual(Lines) |> draw
+
+# ╔═╡ deb4fcd5-de5f-4aa8-b9b9-1db901a9ee56
+[prof1D.profiles0D for prof1D in prof2D.profiles1D]
+
+# ╔═╡ 63b54f27-8137-4d3d-aab9-0c052321b90c
+[prof1D.r for prof1D in prof2D.profiles1D]
+
+# ╔═╡ 123f5978-f284-4e74-96b7-90cd26895308
+pregrouped(
+	[[prof0D.c for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D],
+	[[prof0D.z for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D],
+	color = [prof1D.r for prof1D in prof2D.profiles1D] => nonnumeric
+) * visual(Lines) |> draw(axis = axis)
+
+# ╔═╡ 978408fd-df38-40d5-9ff8-91ca8184a744
+pregrouped(
+	[[prof0D.c for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D],
+	[[prof0D.z for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D],
+	col = [prof1D.r for prof1D in prof2D.profiles1D] => nonnumeric
+) * visual(Lines) |> draw(axis = axis)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 AlgebraOfGraphics = "cbdf2221-f076-402e-a563-3d30da359d67"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
-Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
 
 [compat]
 AlgebraOfGraphics = "~0.8.7"
-CairoMakie = "~0.12.10"
-DataFrames = "~1.6.1"
-StaticArrays = "~1.9.7"
-Tables = "~1.12.0"
+CairoMakie = "~0.12.11"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -145,7 +111,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.0-rc3"
 manifest_format = "2.0"
-project_hash = "6e59772ef696db048eb29410b5fd249c699329db"
+project_hash = "878fda235550f14073b49731ceb9bcca813c5bd7"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -174,9 +140,9 @@ weakdeps = ["StaticArrays"]
     AdaptStaticArraysExt = "StaticArrays"
 
 [[deps.AdaptivePredicates]]
-git-tree-sha1 = "7d5da5dd472490d048b081ca1bda4a7821b06456"
+git-tree-sha1 = "7e651ea8d262d2d74ce75fdf47c4d63c07dba7a6"
 uuid = "35492f91-a3bd-45ad-95db-fcad7dcfedb7"
-version = "1.1.1"
+version = "1.2.0"
 
 [[deps.AlgebraOfGraphics]]
 deps = ["Colors", "Dates", "Dictionaries", "FileIO", "GLM", "GeoInterface", "GeometryBasics", "GridLayoutBase", "Isoband", "KernelDensity", "Loess", "Makie", "NaturalSort", "PlotUtils", "PolygonOps", "PooledArrays", "PrecompileTools", "RelocatableFolders", "StatsBase", "StructArrays", "Tables"]
@@ -255,9 +221,9 @@ version = "1.1.0"
 
 [[deps.CairoMakie]]
 deps = ["CRC32c", "Cairo", "Cairo_jll", "Colors", "FileIO", "FreeType", "GeometryBasics", "LinearAlgebra", "Makie", "PrecompileTools"]
-git-tree-sha1 = "3443ecd9d38c1aeb2c6d0fa3a01598a59929da1d"
+git-tree-sha1 = "4f827b38d3d9ffe6e3b01fbcf866c625fa259ca5"
 uuid = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-version = "0.12.10"
+version = "0.12.11"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
@@ -267,9 +233,9 @@ version = "1.18.0+2"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra"]
-git-tree-sha1 = "71acdbf594aab5bbb2cec89b208c41b4c411e49f"
+git-tree-sha1 = "3e4b134270b372f2ed4d4d0e936aabaefc1802bc"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.24.0"
+version = "1.25.0"
 weakdeps = ["SparseArrays"]
 
     [deps.ChainRulesCore.extensions]
@@ -340,21 +306,10 @@ git-tree-sha1 = "439e35b0b36e2e5881738abc8857bd92ad6ff9a8"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.3"
 
-[[deps.Crayons]]
-git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
-uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.1.1"
-
 [[deps.DataAPI]]
 git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.16.0"
-
-[[deps.DataFrames]]
-deps = ["Compat", "DataAPI", "DataStructures", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrecompileTools", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "04c738083f29f86e62c8afc341f0967d8717bdb8"
-uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.6.1"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -374,9 +329,9 @@ version = "1.11.0"
 
 [[deps.DelaunayTriangulation]]
 deps = ["AdaptivePredicates", "EnumX", "ExactPredicates", "Random"]
-git-tree-sha1 = "88c5695a8d7b23270afe1b6bef8232ac1f201862"
+git-tree-sha1 = "94eb20e6621600f4315813b1d1fc9b8a5a6a34db"
 uuid = "927a84f5-c5f4-47a5-9785-b46e178433df"
-version = "1.3.1"
+version = "1.4.0"
 
 [[deps.Dictionaries]]
 deps = ["Indexing", "Random", "Serialization"]
@@ -679,19 +634,6 @@ git-tree-sha1 = "d1b1b796e47d94588b3757fe84fbf65a5ec4a80d"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
 version = "0.1.5"
 
-[[deps.InlineStrings]]
-git-tree-sha1 = "45521d31238e87ee9f9732561bfee12d4eebd52d"
-uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
-version = "1.4.2"
-
-    [deps.InlineStrings.extensions]
-    ArrowTypesExt = "ArrowTypes"
-    ParsersExt = "Parsers"
-
-    [deps.InlineStrings.weakdeps]
-    ArrowTypes = "31f734f8-188a-4ce0-8406-c8a06bd891cd"
-    Parsers = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-
 [[deps.IntelOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "LazyArtifacts", "Libdl"]
 git-tree-sha1 = "10bd689145d2c3b2a9844005d01087cc1194e79e"
@@ -747,11 +689,6 @@ version = "0.7.10"
     Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
     RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
     Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-
-[[deps.InvertedIndices]]
-git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
-uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
-version = "1.3.0"
 
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -947,15 +884,15 @@ version = "0.5.13"
 
 [[deps.Makie]]
 deps = ["Animations", "Base64", "CRC32c", "ColorBrewer", "ColorSchemes", "ColorTypes", "Colors", "Contour", "Dates", "DelaunayTriangulation", "Distributions", "DocStringExtensions", "Downloads", "FFMPEG_jll", "FileIO", "FilePaths", "FixedPointNumbers", "Format", "FreeType", "FreeTypeAbstraction", "GeometryBasics", "GridLayoutBase", "ImageBase", "ImageIO", "InteractiveUtils", "Interpolations", "IntervalSets", "Isoband", "KernelDensity", "LaTeXStrings", "LinearAlgebra", "MacroTools", "MakieCore", "Markdown", "MathTeXEngine", "Observables", "OffsetArrays", "Packing", "PlotUtils", "PolygonOps", "PrecompileTools", "Printf", "REPL", "Random", "RelocatableFolders", "Scratch", "ShaderAbstractions", "Showoff", "SignedDistanceFields", "SparseArrays", "Statistics", "StatsBase", "StatsFuns", "StructArrays", "TriplotBase", "UnicodeFun", "Unitful"]
-git-tree-sha1 = "768151abed75c6cf5be774456ae82bf9bb7274e9"
+git-tree-sha1 = "2281aaf0685e5e8a559982d32f17d617a949b9cd"
 uuid = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
-version = "0.21.10"
+version = "0.21.11"
 
 [[deps.MakieCore]]
 deps = ["ColorTypes", "GeometryBasics", "IntervalSets", "Observables"]
-git-tree-sha1 = "4b7aa3b9c51d1d9db74e2401dd1d1eaec416ee55"
+git-tree-sha1 = "22fed09860ca73537a36d4e5a9bce0d9e80ee8a8"
 uuid = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
-version = "0.8.7"
+version = "0.8.8"
 
 [[deps.MappedArrays]]
 git-tree-sha1 = "2dab0221fe2b0f2cb6754eaa743cc266339f527e"
@@ -1175,12 +1112,6 @@ git-tree-sha1 = "9306f6085165d270f7e3db02af26a400d580f5c6"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.3"
 
-[[deps.PrettyTables]]
-deps = ["Crayons", "LaTeXStrings", "Markdown", "PrecompileTools", "Printf", "Reexport", "StringManipulation", "Tables"]
-git-tree-sha1 = "66b20dd35966a748321d3b2537c4584cf40387c7"
-uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "2.3.2"
-
 [[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -1205,9 +1136,9 @@ version = "1.0.0"
 
 [[deps.QuadGK]]
 deps = ["DataStructures", "LinearAlgebra"]
-git-tree-sha1 = "1d587203cf851a51bf1ea31ad7ff89eff8d625ea"
+git-tree-sha1 = "cda3b045cf9ef07a08ad46731f5a3165e56cf3da"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
-version = "2.11.0"
+version = "2.11.1"
 
     [deps.QuadGK.extensions]
     QuadGKEnzymeExt = "Enzyme"
@@ -1280,21 +1211,15 @@ version = "0.7.0"
 
 [[deps.SIMD]]
 deps = ["PrecompileTools"]
-git-tree-sha1 = "2803cab51702db743f3fda07dd1745aadfbf43bd"
+git-tree-sha1 = "98ca7c29edd6fc79cd74c61accb7010a4e7aee33"
 uuid = "fdea26ae-647d-5447-a871-4b548cad5224"
-version = "3.5.0"
+version = "3.6.0"
 
 [[deps.Scratch]]
 deps = ["Dates"]
 git-tree-sha1 = "3bac05bc7e74a75fd9cba4295cde4045d9fe2386"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
 version = "1.2.1"
-
-[[deps.SentinelArrays]]
-deps = ["Dates", "Random"]
-git-tree-sha1 = "ff11acffdb082493657550959d4feb4b6149e73a"
-uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.4.5"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -1428,12 +1353,6 @@ deps = ["DataAPI", "DataStructures", "LinearAlgebra", "Printf", "REPL", "Shifted
 git-tree-sha1 = "9022bcaa2fc1d484f1326eaa4db8db543ca8c66d"
 uuid = "3eaba693-59b7-5ba5-a881-562e759f1c8d"
 version = "0.7.4"
-
-[[deps.StringManipulation]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "a04cabe79c5f01f4d723cc6704070ada0b9d46d5"
-uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
-version = "0.3.4"
 
 [[deps.StructArrays]]
 deps = ["ConstructionBase", "DataAPI", "Tables"]
@@ -1692,26 +1611,23 @@ version = "3.6.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─619e0c29-3944-44f5-959c-bd6c174919e1
-# ╠═4ac86560-7444-11ef-05cf-2d111ebdcf16
-# ╠═b9ec506f-a42e-4b3b-8c90-81b5b115a8a2
-# ╠═25587224-449e-4bc7-a435-5da4bac6a0bd
-# ╠═d5fc70e6-d07a-4319-85b9-727ff1b829d2
-# ╠═5c88c4ae-9bae-4bd1-97fe-a4b419fc4ae1
-# ╠═fcff0866-6b96-4e81-9166-6e78ef68922d
-# ╠═7dc3a677-4a98-4ab4-8ec1-1b4ca4b5743f
-# ╠═0f02c573-0fe1-4aa2-92b6-10219d928037
-# ╠═343f5136-f107-4a76-9e93-6ab20d42c928
-# ╠═62cb6f53-a075-48a0-befc-466dbcad7fed
-# ╠═57c7d8bc-c29e-457a-a163-e048f8d35d2b
-# ╠═2df102f0-e686-4684-a567-95092f5ddd5a
-# ╠═0c8ac971-e412-472c-aeae-341cc643831a
-# ╠═a9f5ec43-b563-41c3-bec2-2d51918ed658
-# ╠═27bcd532-802c-4304-924f-d312a0a39c88
-# ╠═05b22e03-693a-4d0c-a098-1379c30ca444
-# ╠═15855485-68c7-4a2b-86fe-709091e7e26b
-# ╠═6ff7c0d8-4e0a-4358-8e3b-07ed7a7adae8
-# ╠═ee4fb9ae-5d56-4ff9-a207-76b14d63d383
-# ╠═5b00f9c8-21d4-4da2-952d-d5d895de20e8
+# ╠═71d82b02-7678-11ef-131b-f59b2187bf33
+# ╠═a45b75f1-0824-4beb-9ac1-28e4aa3930ad
+# ╠═bd6e966c-1691-42e6-835a-02d079a2dd7a
+# ╠═58554449-772d-4211-a76e-9992dd0ea21a
+# ╠═b0d14e04-2e7c-430b-8f4b-39e483648505
+# ╠═6b55b2f0-c370-45b7-8226-6fad3e3ac04c
+# ╠═6df7bd80-c8cd-4313-ba90-eaf714fa4524
+# ╠═143f5b77-a0f6-4386-8f21-2c0dea77a6e5
+# ╠═198a943a-a06b-4ed9-89cf-b9c26fbbfed9
+# ╠═845c065b-55b5-40b1-b5b4-434a365ae2b3
+# ╠═e5562347-b96d-4c09-8ade-bdf784054cee
+# ╠═7dd65561-aa06-405e-a50e-a128b45f1c55
+# ╠═f52aae8c-b5ac-4cd1-aa2f-ecbb43d1f73e
+# ╠═a8a25eb8-6ec9-4cb7-bdaa-e45e5553776a
+# ╠═deb4fcd5-de5f-4aa8-b9b9-1db901a9ee56
+# ╠═63b54f27-8137-4d3d-aab9-0c052321b90c
+# ╠═123f5978-f284-4e74-96b7-90cd26895308
+# ╠═978408fd-df38-40d5-9ff8-91ca8184a744
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
