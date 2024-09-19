@@ -10,29 +10,40 @@ using CairoMakie
 # ╔═╡ a45b75f1-0824-4beb-9ac1-28e4aa3930ad
 using AlgebraOfGraphics
 
+# ╔═╡ ae7d5794-fc1c-4234-99f3-3cbefa22a5eb
+using Unitful
+
+# ╔═╡ b3583d18-3069-439b-a93d-52d83dcde868
+md"""
+Looks like AoG not ready for Unitful yet.
+"""
+
 # ╔═╡ bd6e966c-1691-42e6-835a-02d079a2dd7a
 axis = (yreversed = true,)
 
 # ╔═╡ 58554449-772d-4211-a76e-9992dd0ea21a
-function munk_profile(z::Real; ϵ::Real = 7.37e-3)
-    z̃ = 2(z/1300 - 1)
-    return 1500(
+function munk_profile(z::Number; ϵ::Number = 7.37e-3)
+    z̃ = 2(z/1300u"m" - 1)
+    return 1500u"m/s" * (
         1 + ϵ * (
             z̃ - 1 + exp(-z̃)
         )
     )
 end
 
+# ╔═╡ bc95f7db-c1f2-4e87-bf31-cafba5b7701f
+munk_profile(1e3u"m")
+
 # ╔═╡ b0d14e04-2e7c-430b-8f4b-39e483648505
-random_profile0D(z) = (z = z, c = munk_profile(z) + randn())
+random_profile0D(z) = (z = z, c = munk_profile(z) + randn() * 1u"m/s")
 
 # ╔═╡ 6b55b2f0-c370-45b7-8226-6fad3e3ac04c
-random_profile0D(5e3rand(Float64))
+random_profile0D(rand(Float64) * 5e3u"m")
 
 # ╔═╡ 6df7bd80-c8cd-4313-ba90-eaf714fa4524
-function random_profile1D(Nz::Integer, r::Real = 0.0)
-	z_max = 5e3 - 100rand(Float64)
-	z = range(0, z_max, Nz) .+ randn(Nz) * z_max / 10Nz
+function random_profile1D(Nz::Integer, r::Number = 0.0u"m")
+	z_max = 5e3u"m" - rand(Float64) * 100u"m"
+	z = range(0u"m", z_max, Nz) .+ randn(Nz) * z_max / 10Nz
 	@assert issorted(z)
 	zc_vec = @. random_profile0D(z)
 	return (r = r, profiles0D = zc_vec)
@@ -51,8 +62,8 @@ profile1D_plotter = mapping(:c, :z) * visual(Lines)
 
 # ╔═╡ e5562347-b96d-4c09-8ade-bdf784054cee
 function random_profile2D(Nr::Integer, θ::Real = 0.0)
-	r_max = 10e3 + 10e3rand(Float64) |> abs
-	r_vec = range(0, r_max, Nr) |> collect
+	r_max = 10e3u"m" + rand(Float64) * 10e3u"m" |> abs
+	r_vec = range(0u"m", r_max, Nr) |> collect
 	dr_vec = diff(r_vec)
 	r_vec[2:end] .= r_vec[2:end] + dr_vec/10 .* rand(Nr-1)
 	rzc_vec = @. random_profile1D($rand(9:31), r_vec)
@@ -62,11 +73,15 @@ end
 # ╔═╡ 7dd65561-aa06-405e-a50e-a128b45f1c55
 prof2D = random_profile2D(rand(3:7))
 
+# ╔═╡ 0082140b-5090-484e-84e0-e31f1888cdc8
+data(prof2D.profiles1D[1].profiles0D) * profile1D_plotter |> draw(axis = axis)
+
 # ╔═╡ f52aae8c-b5ac-4cd1-aa2f-ecbb43d1f73e
+# Have to `pregrouped`
 sum(
 	data(prof1D.profiles0D)
 	for prof1D in prof2D.profiles1D
-) * profile1D_plotter |> draw(axis = axis)
+) * mapping(:c, :z) * visual(Lines) |> draw(axis = axis)
 
 # ╔═╡ a8a25eb8-6ec9-4cb7-bdaa-e45e5553776a
 pregrouped(
@@ -82,10 +97,16 @@ pregrouped(
 
 # ╔═╡ 123f5978-f284-4e74-96b7-90cd26895308
 pregrouped(
-	[[prof0D.c for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D],
-	[[prof0D.z for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D],
+	[
+		[prof0D.c |> ustrip for prof0D in prof1D.profiles0D]
+		for prof1D in prof2D.profiles1D
+	],
+	[
+		[prof0D.z |> ustrip for prof0D in prof1D.profiles0D]
+		for prof1D in prof2D.profiles1D
+	],
 	color = [prof1D.r for prof1D in prof2D.profiles1D] => nonnumeric
-) * visual(Lines) |> draw(axis = axis)
+) * (visual(Lines) + visual(Scatter)) |> draw(axis = axis)
 
 # ╔═╡ 978408fd-df38-40d5-9ff8-91ca8184a744
 pregrouped(
@@ -94,15 +115,40 @@ pregrouped(
 	col = [prof1D.r for prof1D in prof2D.profiles1D] => nonnumeric
 ) * visual(Lines) |> draw(axis = axis)
 
+# ╔═╡ e26ac400-63c9-4e01-84fe-c89981f6f197
+pregrouped(
+	[
+		[prof0D.c |> ustrip for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D
+	] => "c [m/s]",
+	[
+		[prof0D.z |> ustrip for prof0D in prof1D.profiles0D] for prof1D in prof2D.profiles1D
+	] => "z [m]",
+	color = [prof1D.r for prof1D in prof2D.profiles1D] => nonnumeric => "r"
+) * (visual(Lines) + visual(Scatter)) |> draw(axis = axis)
+
+# ╔═╡ 14497e95-509e-4adf-aa93-64ba8963ed1a
+# I have to prescribe the order given to AoG.
+let
+	df = (
+		c = [prof0D.c |> ustrip for prof1D in prof2D.profiles1D for prof0D in prof1D.profiles0D],
+		z = [prof0D.z |> ustrip for prof1D in prof2D.profiles1D for prof0D in prof1D.profiles0D],
+		r = [prof1D.r for prof1D in prof2D.profiles1D for prof0D in prof1D.profiles0D]
+	)
+	
+	data(df) * mapping(:c, :z) * (visual(Scatter) + visual(Lines)) |> draw(axis = axis)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 AlgebraOfGraphics = "cbdf2221-f076-402e-a563-3d30da359d67"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 AlgebraOfGraphics = "~0.8.7"
 CairoMakie = "~0.12.11"
+Unitful = "~1.21.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -111,7 +157,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.11.0-rc3"
 manifest_format = "2.0"
-project_hash = "878fda235550f14073b49731ceb9bcca813c5bd7"
+project_hash = "dbae4c4bfd6ecbda80ea462b19e8eb32f9dcd179"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1611,10 +1657,13 @@ version = "3.6.0+0"
 """
 
 # ╔═╡ Cell order:
+# ╟─b3583d18-3069-439b-a93d-52d83dcde868
 # ╠═71d82b02-7678-11ef-131b-f59b2187bf33
 # ╠═a45b75f1-0824-4beb-9ac1-28e4aa3930ad
+# ╠═ae7d5794-fc1c-4234-99f3-3cbefa22a5eb
 # ╠═bd6e966c-1691-42e6-835a-02d079a2dd7a
 # ╠═58554449-772d-4211-a76e-9992dd0ea21a
+# ╠═bc95f7db-c1f2-4e87-bf31-cafba5b7701f
 # ╠═b0d14e04-2e7c-430b-8f4b-39e483648505
 # ╠═6b55b2f0-c370-45b7-8226-6fad3e3ac04c
 # ╠═6df7bd80-c8cd-4313-ba90-eaf714fa4524
@@ -1623,11 +1672,14 @@ version = "3.6.0+0"
 # ╠═845c065b-55b5-40b1-b5b4-434a365ae2b3
 # ╠═e5562347-b96d-4c09-8ade-bdf784054cee
 # ╠═7dd65561-aa06-405e-a50e-a128b45f1c55
+# ╠═0082140b-5090-484e-84e0-e31f1888cdc8
 # ╠═f52aae8c-b5ac-4cd1-aa2f-ecbb43d1f73e
 # ╠═a8a25eb8-6ec9-4cb7-bdaa-e45e5553776a
 # ╠═deb4fcd5-de5f-4aa8-b9b9-1db901a9ee56
 # ╠═63b54f27-8137-4d3d-aab9-0c052321b90c
 # ╠═123f5978-f284-4e74-96b7-90cd26895308
 # ╠═978408fd-df38-40d5-9ff8-91ca8184a744
+# ╠═e26ac400-63c9-4e01-84fe-c89981f6f197
+# ╠═14497e95-509e-4adf-aa93-64ba8963ed1a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
