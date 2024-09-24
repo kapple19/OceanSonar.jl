@@ -2,6 +2,18 @@
 
 julia_version = "1.11.0-rc3"
 manifest_format = "2.0"
-project_hash = "dc77c3adf06e5d5e0eede695c6c32fc63ca14779"
+project_hash = "860b48502b346a72ad31730679bc8f86c5ca3cc0"
 
-[deps]
+[[deps.Base64]]
+uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+version = "1.11.0"
+
+[[deps.InteractiveUtils]]
+deps = ["Markdown"]
+uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+version = "1.11.0"
+
+[[deps.Markdown]]
+deps = ["Base64"]
+uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+version = "1.11.0"

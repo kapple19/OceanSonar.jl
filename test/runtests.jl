@@ -15,6 +15,6 @@ using Base: Fix1
     name = "Preamble"
     @time @testset "$name" begin
         @info "Testing $name"
-        @safetestset "Text Styles" include("00_preamble/textstyles.jl")
+        @safetestset "Text Cases" include("00_preamble/general/textcases.jl")
     end
 end

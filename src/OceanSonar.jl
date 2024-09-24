@@ -7,6 +7,8 @@ Package of ocean sonar numerical models.
 """
 module OceanSonar
 
+using InteractiveUtils: subtypes
+
 """
 `include_subroots`
 
